@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  homer:
+    image: b4bz/homer
+    container_name: homer
+    volumes:
+      - ./data:/www/assets
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homer.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.homer.entrypoints=websecure"
+      - "traefik.http.routers.homer.tls.certresolver=mytlschallenge"
+      - traefik.http.services.homer.loadbalancer.server.port=8080
+    environment:
+      - UID=1000
+      - GID=1000
+    restart: unless-stopped
+    networks:
+      - proxy
+networks:
+  proxy:
+    external: true

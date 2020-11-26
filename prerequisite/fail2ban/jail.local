@@ -1,0 +1,11 @@
+[DEFAULT]
+banaction = ufw
+
+[ssh]
+enabled  = true
+port     = ssh
+filter   = sshd
+logpath  = /var/log/auth.log
+maxretry = 6
+banaction = ufw
+            slack-notify

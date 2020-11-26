@@ -1,0 +1,69 @@
+version: "3.3"
+
+services:
+  gitlab:
+    image: "gitlab/gitlab-ce:latest"
+    container_name: "gitlab"
+    restart: unless-stopped
+    ports:
+      - "30022:22"
+    environment:
+      GITLAB_SHELL_SSH_PORT: 30022
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://git.${DOMAIN}'
+        nginx['listen_https'] = false
+        nginx['listen_port'] = 80
+        nginx['proxy_set_headers'] = {
+          'X-Forwarded-Proto' => 'https',
+          'X-Forwarded-Ssl' => 'on'
+        }
+        gitlab_rails['backup_upload_remote_directory'] = 's3-backup-bucket'
+        gitlab_rails['smtp_enable'] = true
+        gitlab_rails['smtp_address'] = "smtp.${DOMAIN}"
+        gitlab_rails['smtp_port'] = 587
+        gitlab_rails['smtp_user_name'] = "gitlab@${DOMAIN}"
+        gitlab_rails['smtp_password'] = "${SMTP_PASSWORD}"
+        gitlab_rails['smtp_domain'] = "${DOMAIN}"
+        gitlab_rails['smtp_authentication'] = "plain"
+        gitlab_rails['smtp_enable_starttls_auto'] = true
+        gitlab_rails['gitlab_shell_ssh_port'] = 22
+    volumes:
+      - "./config:/etc/gitlab:Z"
+      - "./logs:/var/log/gitlab:Z"
+      - "./data:/var/opt/gitlab:Z"
+      - "/etc/localtime:/etc/localtime:ro"
+    hostname: git.${DOMAIN}
+    labels:
+      - "traefik.enable=true" 
+      - "traefik.http.routers.gitlab.rule=Host(`git.${DOMAIN}`)" 
+      - "traefik.http.routers.gitlab.entrypoints=websecure" 
+      - "traefik.http.routers.gitlab.tls.certresolver=mytlschallenge" 
+      - "traefik.http.routers.gitlab.middlewares=gitlab-headers" 
+      - "traefik.http.routers.gitlab.service=gitlab" 
+      
+      - "traefik.http.middlewares.gitlab-headers.headers.customrequestheaders.X_FORWARDED_PROTO=https" 
+      - "traefik.http.middlewares.gitlab-headers.headers.customrequestheaders.X_Forwarded-Ssl=on" 
+      - "traefik.http.middlewares.gitlab-headers.headers.customresponseheaders.X_FORWARDED_PROTO=https" 
+      - "traefik.http.middlewares.gitlab-headers.headers.customresponseheaders.X_Forwarded-Ssl=on" 
+      - "traefik.http.services.gitlab.loadbalancer.server.port=80" 
+
+      - "traefik.http.routers.gitlab-registry.rule=Host(`registry.${DOMAIN}`)" 
+      - "traefik.http.routers.gitlab-registry.entrypoints=websecure" 
+      - "traefik.http.routers.gitlab-registry.tls.certresolver=mytlschallenge" 
+      - "traefik.http.routers.gitlab-registry.service=gitlab-registry" 
+      - "traefik.http.services.gitlab-registry.loadbalancer.server.port=8500"
+    cap_add:
+      - SYS_ADMIN
+    networks:
+      - proxy
+  gitlab-runner:
+    image: "gitlab/gitlab-runner:latest"
+    container_name: "gitlab-runner"
+    volumes:
+      - "./gitlab-runner/config:/etc/gitlab-runner"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: always 
+networks:
+  proxy:
+    external: true
+
