@@ -1,0 +1,20 @@
+version: '3.3'
+services:
+  homer:
+    image: instrumentisto/coturn
+    container_name: coturn
+    labels:
+      - "--log-file=stdout"
+      - "--min-port=49160"
+      - "--max-port=49200"
+    restart: unless-stopped
+    volumes:
+      - "./turnserver.conf:/etc/coturn/turnserver.conf"
+    ports:
+      - 3478:3478
+      - 49160-49200:49160-49200
+    networks:
+      - proxy
+networks:
+  proxy:
+    external: true
