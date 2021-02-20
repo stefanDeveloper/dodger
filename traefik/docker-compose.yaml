@@ -3,7 +3,7 @@ version: '3.3'
 services:
   reverse-proxy:
     # The official v2.0 Traefik docker image
-    image: traefik:v2.0
+    image: traefik:latest
     container_name: "traefik"
     # Enables the web UI and tells Traefik to listen to docker
     command:
@@ -15,8 +15,10 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"
-      - "--certificatesresolvers.mytlschallenge.acme.email=YOUR_EMAIL"
+      - "--certificatesresolvers.mytlschallenge.acme.email=stefan-machmeier@outlook.com"
       - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.mytlschallenge.acme.keytype=EC384"
+      - "--certificatesresolvers.mytlschallenge.acme.preferredchain='ISRG Root X1'"
     ports:
       # The HTTP port
       - "80:80"
@@ -28,18 +30,25 @@ services:
     labels:
       - "traefik.enable=true"
       # Dashboard
-      - "traefik.http.routers.traefik.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.tls.certresolver=mytlschallenge"
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.middlewares=dashboardauth"
       - "traefik.http.middlewares.dashboardauth.basicauth.users=admin:{SHA}${DASHBOARD_PASSWORD}"
-      # global redirect to https
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+        # Global redirection: http to https
+      - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:(www.)?.+}`)"
       - "traefik.http.routers.http-catchall.entrypoints=web"
-      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
-      # middleware redirect
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.http-catchall.middlewares=wwwtohttps"
+      # Global redirection: https (www.) to https
+      - "traefik.http.routers.wwwsecure-catchall.rule=HostRegexp(`{host:(www.).+}`)"
+      - "traefik.http.routers.wwwsecure-catchall.entrypoints=websecure"
+      - "traefik.http.routers.wwwsecure-catchall.tls=true"
+      - "traefik.http.routers.wwwsecure-catchall.middlewares=wwwtohttps"
+      # middleware: http(s)://(www.) to  https://
+      - "traefik.http.middlewares.wwwtohttps.redirectregex.regex=^https?://(?:www.)?(.+)"
+      - "traefik.http.middlewares.wwwtohttps.redirectregex.replacement=https://$${1}"
+      - "traefik.http.middlewares.wwwtohttps.redirectregex.permanent=true"
     networks:
       - proxy
 networks:
