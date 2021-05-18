@@ -8,4 +8,4 @@ as well as change your E-Mail in:
 
 >  ```--certificatesresolvers.mytlschallenge.acme.email=YOUR_EMAIL```
 
-(I wasn't to resolve it with a env, please feel free to contribute)
+(I wasn't able to resolve it with a `.env` file, please feel free to contribute)

@@ -17,30 +17,36 @@ This repository provides a Docker stack to easily set up your server. This inclu
 
 ## Table Of Contents
 
-* [Wordpress](./blog/README.md)
-* [GitLab](./gitlab/README.md)
-* [Traefik](./traefik/README.md)
-* [Portainer](./portainer/README.md)
-* [Nextcloud](./Nextcloud/README.md)
-* [Homer](./homer/README.md)
-* [OpenVPN](./openvpn/README.md)
-* [Resilio](./resilio/README.md)
-* [Seafile](./seafile/README.md)
+* [Traefik](./traefik/README.md) as a reverse proxy to route your request (mandatory)
+* [Wordpress](./blog/README.md) just a simple Wordpress blog page
+* [GitLab](./gitlab/README.md) used to start coding
+* [Portainer](./portainer/README.md) helps you to maintain your containers and images
+* [Nextcloud](./Nextcloud/README.md) one of my favourite private clouds
+* [Homer](./homer/README.md) just a landing page with links
+* [OpenVPN](./openvpn/README.md) is self-explaining
+* [Resilio](./resilio/README.md) allows you to sync your data with others, helpful to share backups
+* [Seafile](./seafile/README.md) other cloud
 
-## Content
+## Usage
 
-### Traefik
+Just clone this repository and follow each guideline inside the corresponding application folder:
 
-### Portainer
+```sh
+git clone https://github.com/stefanDeveloper/dodger.git
+```
 
-### Seafile
+In each of these folders you will find a `docker-compose.yml`, a `.env` file, as well as a `README.md` that describes some basics about this application.
 
-### Homer
+In case you want to run applications individually, please make sure your Docker environment has a network called `proxy`. If this is not the case, please run:
 
-### OpenVPN
+```sh
+docker network create proxy
+```
 
-### Gitlab
+## Prerequisite
 
-### Wordpress
+Before running these applications, it is advisable to follow the [Prerequisiste](./rerequisite/README.md). This guideline helps you to set up your server with some very basic settings, like Fail2Ban.
 
-## License
+## Contribution
+
+If you face troubles starting one of these `docker-compose` files, do not hestitate to create issues or pull request.
