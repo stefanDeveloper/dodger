@@ -10,7 +10,9 @@ services:
       - "traefik.http.routers.homer.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.homer.entrypoints=websecure"
       - "traefik.http.routers.homer.tls.certresolver=mytlschallenge"
-      - traefik.http.services.homer.loadbalancer.server.port=8080
+      - "traefik.http.services.homer.loadbalancer.server.port=8080"
+      - "traefik.http.routers.homer.middlewares=homer-auth"
+      - "traefik.http.middlewares.homer-auth.basicauth.users=admin:{SHA}${DASHBOARD_PASSWORD}"
     environment:
       - UID=1000
       - GID=1000

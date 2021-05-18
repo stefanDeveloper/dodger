@@ -15,7 +15,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"
-      - "--certificatesresolvers.mytlschallenge.acme.email=stefan-machmeier@outlook.com"
+      - "--certificatesresolvers.mytlschallenge.acme.email=YOUR_EMAIL"
       - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.mytlschallenge.acme.keytype=EC384"
       - "--certificatesresolvers.mytlschallenge.acme.preferredchain='ISRG Root X1'"
