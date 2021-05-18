@@ -28,7 +28,7 @@ DOMAIN=
 DASHBOARD_PASSWORD=
 ```
 
-And then run
+For the password you can use [htpasswd](https://hostingcanada.org/htpasswd-generator/). And then run
 
 ```sh
 docker-compose up -d
