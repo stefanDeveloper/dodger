@@ -21,7 +21,7 @@ This repository provides a Docker stack to easily set up your server. This inclu
 * [Wordpress](./blog/README.md) just a simple Wordpress blog page
 * [GitLab](./gitlab/README.md) for coding
 * [Portainer](./portainer/README.md) helps you to maintain your containers and images
-* [Nextcloud](./Nextcloud/README.md) one of my favourite private clouds :heart:
+* [Nextcloud](./Nextcloud/README.md) one of my favorite private clouds :heart:
 * [Homer](./homer/README.md) just a landing page with links
 * [OpenVPN](./openvpn/README.md) is self-explaining
 * [Resilio](./resilio/README.md) allows you to sync your data with others, helpful to share backups
@@ -45,7 +45,11 @@ docker network create proxy
 
 ## Prerequisite
 
-Before running one of the applications, it is advisable to follow the [Prerequisiste](./rerequisite/README.md). This guideline helps you to set up your server with some very basic settings, like Fail2Ban.
+Before running one of the applications, it is advisable to follow the [Prerequisite](./rerequisite/README.md). This guideline helps you to set up your server with some very basic settings, like Fail2Ban.
+
+## Getting Started
+
+tbc. Ansible configuration
 
 ## Contribution
 
