@@ -2,7 +2,7 @@ version: '3.3'
 services:
   db:
     restart: always
-    image: postgres:11
+    image: postgres:13
     networks:
       - proxy
     environment:
@@ -20,6 +20,20 @@ services:
     volumes:
       - ./redis:/var/lib/redis
 
+  clamav:
+    image: "clamav/clamav:stable_base"
+    container_name: "clamav"
+    networks:
+      - proxy
+    volumes:
+      # Socket
+      # - /usr/sbin/:/var/run/clamav/
+      # Virus DB
+      - /var/docker/clamav/virus_db/:/var/lib/clamav/
+    ports:
+      - 3310:3310
+    restart: unless-stopped
+
   nextcloud:
     image: nextcloud:latest
     restart: always
@@ -30,18 +44,18 @@ services:
       - redis
       - db
     labels:
-      - "traefik.enable=true"
-      - traefik.http.routers.nextcloud.middlewares=nextcloud,nextcloud_redirect
+      - traefik.enable=true
+      - traefik.http.routers.nextcloud.middlewares=nextcloud,nextcloud-dav
       - traefik.http.routers.nextcloud.tls.certresolver=mytlschallenge
       - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
-      # - traefik.http.middlewares.nextcloud.headers.customFrameOptionsValue=ALLOW-FROM https://${DOMAIN}
-      # - traefik.http.middlewares.nextcloud.headers.contentSecurityPolicy=frame-ancestors 'self' ${DOMAIN} *.${DOMAIN}
-      # - traefik.http.middlewares.testHeader.headers.customrequestheaders.X-Frame-Options=SAMEORIGIN
+      - traefik.http.middlewares.nextcloud.headers.customFrameOptionsValue=ALLOW-FROM https://${DOMAIN}
+      - traefik.http.middlewares.nextcloud.headers.contentSecurityPolicy=frame-ancestors 'self' ${DOMAIN} *.${DOMAIN}
+      - traefik.http.middlewares.nextcloud.headers.customresponseheaders.X-Frame-Options=SAMEORIGIN
       - traefik.http.middlewares.nextcloud.headers.stsSeconds=155520011
       - traefik.http.middlewares.nextcloud.headers.stsIncludeSubdomains=true
       - traefik.http.middlewares.nextcloud.headers.stsPreload=true
-      - traefik.http.middlewares.nextcloud_redirect.redirectregex.regex=/.well-known/(card|cal)dav
-      - traefik.http.middlewares.nextcloud_redirect.redirectregex.replacement=/remote.php/dav/
+      - "traefik.http.middlewares.nextcloud-dav.redirectregex.regex=https://(.*)/.well-known/(card|cal)dav"
+      - "traefik.http.middlewares.nextcloud-dav.redirectregex.replacement=https://$${1}/remote.php/dav/"
     environment:
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
