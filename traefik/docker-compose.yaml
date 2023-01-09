@@ -5,6 +5,7 @@ services:
     # The official v2.0 Traefik docker image
     image: traefik:latest
     container_name: "traefik"
+    restart: always
     # Enables the web UI and tells Traefik to listen to docker
     command:
       - "--api=true"
@@ -36,15 +37,18 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.middlewares=dashboardauth"
       - "traefik.http.middlewares.dashboardauth.basicauth.users=admin:{SHA}${DASHBOARD_PASSWORD}"
+
         # Global redirection: http to https
       - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:(www.)?.+}`)"
       - "traefik.http.routers.http-catchall.entrypoints=web"
       - "traefik.http.routers.http-catchall.middlewares=wwwtohttps"
+
       # Global redirection: https (www.) to https
       - "traefik.http.routers.wwwsecure-catchall.rule=HostRegexp(`{host:(www.).+}`)"
       - "traefik.http.routers.wwwsecure-catchall.entrypoints=websecure"
       - "traefik.http.routers.wwwsecure-catchall.tls=true"
       - "traefik.http.routers.wwwsecure-catchall.middlewares=wwwtohttps"
+
       # middleware: http(s)://(www.) to  https://
       - "traefik.http.middlewares.wwwtohttps.redirectregex.regex=^https?://(?:www.)?(.+)"
       - "traefik.http.middlewares.wwwtohttps.redirectregex.replacement=https://$${1}"
