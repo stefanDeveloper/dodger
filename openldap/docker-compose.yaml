@@ -3,9 +3,8 @@ services:
   openldap:
     image: osixia/openldap:latest
     container_name: "openldap"
-    command:
-      - "--loglevel=debug"
     environment:
+      - LDAP_BASE_DN=${BASE_DN}
       - LDAP_ORGANISATION=${NAME}
       - LDAP_DOMAIN=${DOMAIN}
       - LDAP_ADMIN_PASSWORD=${PASSWORD}
@@ -17,13 +16,21 @@ services:
       - ./slapd_data:/etc/ldap/slapd.d
     networks:
       - proxy
+
   phpldapadmin:
-    image: osixia/phpldapadmin
-    container_name: "phpldapadmin"
+    image: wheelybird/ldap-user-manager:latest
+    ports:
+      - "80:80"
+      - "443:443"
     environment:
-      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
-      PHPLDAPADMIN_HTTPS: "false"
-      PHPLDAPADMIN_LDAP_CLIENT_TLS: "false"
+      LDAP_REQUIRE_STARTTLS: 'false'
+      LDAP_TLS_VERIFY_CLIENT: never
+      LDAP_URI: "ldap://ldap"
+      LDAP_BASE_DN: "${BASE_DN}"
+      LDAP_ADMINS_GROUP: "admins"
+      LDAP_ADMIN_BIND_PWD: "${PASSWORD}"
+      LDAP_ADMIN_BIND_DN: "cn=admin,${BASE_DN}"
+      SITE_NAME: "Mustermann"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.phpldapadmin.rule=Host(`ldap-admin.${DOMAIN}`)"
@@ -34,12 +41,9 @@ services:
       - "traefik.http.routers.phpldapadmin.middlewares=phpldapadmin-auth"
       - "traefik.http.middlewares.phpldapadmin-auth.basicauth.users=admin:{SHA}${DASHBOARD_PASSWORD}"
     restart: always
-    volumes:
-      - ./data/:/var/www/phpldapadmin/
-    ports:
-      - 80
     networks:
       - proxy
+
 networks:
   proxy:
     external: true

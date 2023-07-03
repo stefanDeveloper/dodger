@@ -26,6 +26,8 @@ This repository provides a Docker stack to easily set up your server. This inclu
 * [OpenVPN](./openvpn/README.md) is self-explaining
 * [Resilio](./resilio/README.md) allows you to sync your data with others, helpful to share backups
 * [Seafile](./seafile/README.md) another cloud (not used by me anymore)
+* [OpenLDAP](./openldap/README.md) configuration for easy usage with GUI.
+* [Matrix](./matrix/README.md) Synapse server with LDAP configuration.
 
 ## Usage
 
