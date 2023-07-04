@@ -123,23 +123,22 @@ chmod 600 ~/.ssh/authorized_keys
 sudo vim /etc/ssh/sshd_config
 ```
 
-Change PermitRootLogin to
-
-PermitRootLogin no
+- `Change PermitRootLogin to`
+- `PermitRootLogin no`
 
 Adapt following ssh configs:
 
-* ```ClientAliveInterval 300```
+* `ClientAliveInterval 300`
 
-* ```ClientAliveCountMax 2```
+* `ClientAliveCountMax 2`
 
-* ```PubkeyAuthentication yes```
+* `PubkeyAuthentication yes`
 
-* ```MaxAuthTries 3```
+* `MaxAuthTries 3`
 
 ### Disallow SSH password authentication
 
-```PasswordAuthentication no```
+`PasswordAuthentication no`
 
 Restart is required:
 
