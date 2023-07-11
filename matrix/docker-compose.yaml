@@ -8,9 +8,9 @@ services:
     environment:
       - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
     volumes:
-      - ./files:/data
+      - ./matrix-synapse-files:/data
     depends_on:
-      - matrix-db
+      - matrix-synapse-db
     ports:
       - 8448:8448/tcp
     labels:
@@ -22,13 +22,13 @@ services:
     networks:
       - proxy
 
-  matrix-nginx:
-    container_name: "matrix-nginx"
+  matrix-synapse-nginx:
+    container_name: "matrix-synapse-nginx"
     image: nginx:latest
     restart: always
     volumes:
-      - ./nginx/matrix.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/www:/var/www/
+      - ./matrix-synapse-nginx/matrix.conf:/etc/nginx/conf.d/default.conf
+      - ./matrix-synapse-nginx/www:/var/www/
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.nginx.rule=Host(`matrix.${DOMAIN}`)"
@@ -38,8 +38,8 @@ services:
     networks:
       - proxy
 
-  matrix-db:
-    container_name: matrix-db
+  matrix-synapse-db:
+    container_name: matrix-synapse-db
     image: postgres:12-alpine
     environment:
       - POSTGRES_DB=synapse
@@ -47,7 +47,7 @@ services:
       - POSTGRES_PASSWORD=YOUR_SECRET
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     volumes:
-      - ./schemas:/var/lib/postgresql/data
+      - ./matrix-synapse-schemas:/var/lib/postgresql/data
     networks:
       - proxy
 

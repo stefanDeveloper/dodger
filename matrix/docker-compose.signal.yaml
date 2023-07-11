@@ -1,0 +1,39 @@
+version: "3.3"
+
+services:
+  mautrix-signal:
+    container_name: mautrix-signal
+    image: dock.mau.dev/mautrix/signal
+    restart: unless-stopped
+    volumes:
+    - ./matrix-synapse-files/bridge:/data
+    - ./signald:/signald
+    depends_on:
+    - signald
+    networks:
+      - proxy
+
+  signald:
+    container_name: signald
+    image: docker.io/signald/signald
+    restart: unless-stopped
+    volumes: 
+    - ./signald:/signald
+    networks:
+      - proxy
+
+  mautrix-signal-db:
+    image: postgres:13-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mautrixsignal
+      POSTGRES_DATABASE: mautrixsignal
+      POSTGRES_PASSWORD: 
+    volumes:
+    - ./db:/var/lib/postgresql/data
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

@@ -1,0 +1,28 @@
+version: "3.3"
+
+services:
+  mautrix-whatsapp:
+    container_name: mautrix-whatsapp
+    image: dock.mau.dev/mautrix/whatsapp:latest
+    restart: unless-stopped
+    volumes:
+      - ./matrix-synapse-files/matrix-whatsapp:/data
+    networks:
+      - proxy
+
+  mautrix-whatsapp-db:
+    container_name: matrix-whatsapp-db
+    image: docker.io/postgres:12-alpine
+    environment:
+      - POSTGRES_DB=synapse
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD=
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - ./matrix-whatsapp-schemas:/var/lib/postgresql/data
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
