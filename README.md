@@ -27,6 +27,7 @@ This repository provides a complete Docker stack to easily set up your server wi
 * [Seafile](./seafile/README.md) another cloud (not used by me anymore)
 * [OpenLDAP](./openldap/README.md) configuration for easy usage with GUI.
 * [Matrix](./matrix/README.md) Synapse server with LDAP configuration.
+* [Hugo](./hugo/README.md) hugo server to deploy simple website.
 
 ## Getting Started
 
