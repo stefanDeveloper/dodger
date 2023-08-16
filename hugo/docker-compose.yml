@@ -1,0 +1,18 @@
+version: '3.3'
+services:
+  server:
+    image: klakegg/hugo:0.101.0
+    command: server
+    restart: unless-stopped
+    volumes:
+      - "website:/src"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hugo.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.hugo.entrypoints=websecure"
+      - "traefik.http.routers.hugo.tls.certresolver=mytlschallenge"
+    networks:
+      - proxy
+networks:
+  proxy:
+    external: true
