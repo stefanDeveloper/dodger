@@ -1,0 +1,7 @@
+ansible
+docker-py
+docker-compose
+flake9
+ansible-lint
+pypsrp
+pysocks

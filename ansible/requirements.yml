@@ -1,0 +1,16 @@
+---
+collections:
+
+  - name: community.general
+
+  - name: ansible.posix
+
+  - name: devsec.hardening
+
+roles:
+
+  - name: gantsign.oh-my-zsh
+
+  - name: robertdebock.update
+
+  - name: geerlingguy.docker

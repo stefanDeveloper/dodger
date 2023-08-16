@@ -1,0 +1,21 @@
+users:
+  - username: root
+    oh_my_zsh:
+      theme: agnoster
+      plugins:
+        - git
+      update_mode: reminder
+      update_frequency: 3
+      write_zshrc: true
+  - username: stefan
+    fullname: mrx8
+    group: sudo
+    key: ""
+    shell: /bin/zsh
+    oh_my_zsh:
+      theme: agnoster
+      plugins:
+        - git
+      update_mode: reminder
+      update_frequency: 3
+      write_zshrc: true
