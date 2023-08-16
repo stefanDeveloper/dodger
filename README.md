@@ -13,9 +13,9 @@
 
 ## Overview
 
-This repository provides a Docker stack to easily set up your server. This includes Traefik, Portainer, Nextcloud, Homer, Openvpn, Gitlab, Wordpress, Resilio, and Seafile.
+This repository provides a complete Docker stack to easily set up your server with Traefik, Portainer, Nextcloud, Homer, Openvpn, Gitlab, Wordpress, Resilio, Seafile, OpenLDAP, Jenkins, Matrix, and OpenVPN.
 
-## Table Of Contents
+## Supported Applications
 
 * [Traefik](./traefik/README.md) as a reverse proxy to route your request (mandatory)
 * [Wordpress](./blog/README.md) just a simple Wordpress blog page

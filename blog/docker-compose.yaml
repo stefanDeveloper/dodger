@@ -18,6 +18,7 @@ services:
       - db 
     depends_on: 
       - db
+
     image: wordpress
     container_name: wordpress
     restart: unless-stopped

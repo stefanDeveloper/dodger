@@ -4,7 +4,6 @@ services:
     image: jenkins/jenkins:lts
     container_name: jenkins
     volumes:
-      - /YOUR_SOURCE_FOLDER:/YOUR_SOURCE_FOLDER
       - ./jenkins_data:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
@@ -17,7 +16,7 @@ services:
       - "traefik.http.routers.jenkins.tls.certresolver=mytlschallenge"
       - "traefik.http.services.jenkins.loadbalancer.server.port=8080"
     environment:
-    # you can set your preferred time zone
+      # you can set your preferred time zone
       - "TZ= Europe/Berlin"
       - "JAVA_OPTS=-Dhudson.footerURL=https://jenkins.${DOMAIN}"
     networks:
