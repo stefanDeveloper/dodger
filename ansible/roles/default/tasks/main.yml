@@ -1,0 +1,33 @@
+---
+- name: OS and SSH Hardening using devsec
+  ansible.builtin.include_tasks: "hardening.yml"
+
+- name: Install common software
+  ansible.builtin.package:
+    name: "{{ item }}"
+  with_items:
+    - htop
+    - vim
+    
+- name: Ensure group "emcl" exists
+  ansible.builtin.group:
+    name: emcl
+    state: present
+
+- name: Add users
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    comment: "{{ item.fullname }}"
+    group: "{{ item.group }}"
+    home: /home/{{ item.username }}
+    shell: "{{ item.shell }}"
+  with_items:
+    - "{{ users }}"
+
+- name: Set authorized key for users
+  ansible.posix.authorized_key:
+    user: "{{ item.username }}"
+    state: present
+    key: "{{ item.key }}"
+  with_items:
+    - "{{ users }}"

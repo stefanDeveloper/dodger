@@ -1,0 +1,13 @@
+---
+---
+- name: Setup dodger
+  hosts: dodger
+  become: true
+  gather_facts: true
+  vars_files:
+    - "users.yml"
+  roles:
+    - name: gantsign.oh-my-zsh
+    - name: default
+    - name: robertdebock.update
+    - name: geerlingguy.docker

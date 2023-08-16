@@ -1,0 +1,21 @@
+---
+- name: Install Docker Role geerlingguy.docker
+  ansible.builtin.include_role:
+    name: geerlingguy.docker
+
+- name: Prune docker images without tags (dangling) once per day
+  ansible.builtin.cron:
+    name: prune_docker_images
+    user: root
+    job: docker image prune -f
+    hour: '2'
+
+- name: Ensure python3-docker is installed
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python3-docker
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

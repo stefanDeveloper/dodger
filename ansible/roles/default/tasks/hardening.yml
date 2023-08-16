@@ -1,0 +1,8 @@
+---
+- name: OS hardening
+  ansible.builtin.include_role:
+    name: devsec.hardening.os_hardening
+
+- name: SSH hardening
+  ansible.builtin.include_role:
+    name: devsec.hardening.ssh_hardening
