@@ -10,7 +10,7 @@ Set the following environment variables:
 DOMAIN=
 ```
 
-and change the volume `YOUR_SOURCE_FOLDER` to your corresponding folder if you want to run docker commands in this folder. It can be useful when you want to create automatic backups.
+and change the volume to your corresponding folder if you want to run docker commands in this folder. It can be useful when you want to create automatic backups.
 
 Finally you can start the application (without detach mode to get the token):
 
