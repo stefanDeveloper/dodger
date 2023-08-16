@@ -1,5 +1,4 @@
 ---
----
 - name: Setup dodger
   hosts: dodger
   become: true
@@ -11,3 +10,8 @@
     - name: default
     - name: robertdebock.update
     - name: geerlingguy.docker
+  tasks:
+    - name: Clone repository
+      ansible.builtin.git:
+        repo: https://github.com/stefanDeveloper/dodger.git
+        dest: /srv/dodger
