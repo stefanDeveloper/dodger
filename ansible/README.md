@@ -13,9 +13,9 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Setup `host.yml`
+Replace your IP address in the `inventory.yml` and run the provided Ansible playbook:
 
-```
-ansible-playbook
+```bash
+ansible-playbook dodger_deploy.yml
 ```
 
