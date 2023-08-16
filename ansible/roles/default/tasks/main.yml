@@ -21,6 +21,7 @@
     group: "{{ item.group }}"
     home: /home/{{ item.username }}
     shell: "{{ item.shell }}"
+  when: "item.username != 'root'"
   with_items:
     - "{{ users }}"
 
@@ -29,5 +30,6 @@
     user: "{{ item.username }}"
     state: present
     key: "{{ item.key }}"
+  when: "item.username != 'root'"
   with_items:
     - "{{ users }}"

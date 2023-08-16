@@ -2,3 +2,6 @@ ftb/world/
 *.zip
 db
 wordpress
+./**/.venv
+.venv
+.vscode
