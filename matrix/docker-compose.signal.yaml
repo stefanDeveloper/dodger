@@ -28,7 +28,7 @@ services:
     environment:
       POSTGRES_USER: mautrixsignal
       POSTGRES_DATABASE: mautrixsignal
-      POSTGRES_PASSWORD: 
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
     - ./db:/var/lib/postgresql/data
     networks:
