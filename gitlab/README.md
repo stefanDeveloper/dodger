@@ -8,7 +8,7 @@ Set the following environment variables:
 
 ```env
 DOMAIN=
-SMTP_PASSWORD
+SMTP_PASSWORD=
 ```
 
 And then run

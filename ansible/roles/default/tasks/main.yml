@@ -9,9 +9,9 @@
     - htop
     - vim
     
-- name: Ensure group "emcl" exists
+- name: Ensure group "dodger" exists
   ansible.builtin.group:
-    name: emcl
+    name: dodger
     state: present
 
 - name: Add users
