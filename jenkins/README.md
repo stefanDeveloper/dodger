@@ -6,7 +6,7 @@
 
 Set the following environment variables:
 
-```env
+```bash
 DOMAIN=
 ```
 
@@ -14,7 +14,7 @@ and change the volume to your corresponding folder if you want to run docker com
 
 Finally you can start the application (without detach mode to get the token):
 
-```sh
+```bash
 docker-compose up
 ```
 

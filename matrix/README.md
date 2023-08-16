@@ -1,13 +1,28 @@
 # Synapse Matrix Server
 
-Fill `.env` file with all details and replace `YOUR_DOMAIN.TLD` and `YOUR_SECRET` in `nginx/` and `files`.
+To run docker-compose up you have to adapt `.env` and replace `YOUR_DOMAIN.TLD` and `YOUR_SECRET` in `nginx/` and `files`.
 
-## Bridges
+## Usage
 
-- https://docs.mau.fi/bridges/index.html
+Set the following environment variables:
+
+```bash
+DOMAIN=
+DB_PASSWORD=
+```
+
+And then run
+
+```sh
+docker-compose up -d
+```
+
+### Bridges
+
+> For more information, please read the official documentation of Mautrix https://docs.mau.fi/bridges/index.html
 
 Supported bridges in this setting
 
-- Signal
-- Telegram
-- WhatsApp
+- [Signal](docker-compose.signal.yaml)
+- [Telegram](docker-compose.telegram.yaml)
+- [WhatsApp](docker-compose.whatsapp.yaml)

@@ -1,6 +1,6 @@
 # Homer
 
-A simple static Homepage for quick access to our applications. For further information, please check out [Homer](https://github.com/bastienwirtz/homer)
+> A simple static Homepage for quick access to our applications. For further information, please check out [Homer](https://github.com/bastienwirtz/homer)
 
 ## Usage
 
