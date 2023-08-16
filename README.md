@@ -13,7 +13,7 @@
 
 ## Overview
 
-This repository provides a complete Docker stack to easily set up your server with Traefik, Portainer, Nextcloud, Homer, Openvpn, Gitlab, Wordpress, Resilio, Seafile, OpenLDAP, Jenkins, Matrix, and OpenVPN.
+This repository provides a complete Docker stack to easily set up your server with Traefik, Portainer, Nextcloud, Homer, Openvpn, Gitlab, Wordpress, Resilio, Seafile, OpenLDAP, Jenkins, and Matrix.
 
 ## Supported Applications
 
@@ -23,7 +23,6 @@ This repository provides a complete Docker stack to easily set up your server wi
 * [Portainer](./portainer/README.md) helps you to maintain your containers and images
 * [Nextcloud](./Nextcloud/README.md) one of my favorite private clouds :heart:
 * [Homer](./homer/README.md) just a landing page with links
-* [OpenVPN](./openvpn/README.md) is self-explaining
 * [Resilio](./resilio/README.md) allows you to sync your data with others, helpful to share backups
 * [Seafile](./seafile/README.md) another cloud (not used by me anymore)
 * [OpenLDAP](./openldap/README.md) configuration for easy usage with GUI.
