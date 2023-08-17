@@ -3,6 +3,6 @@ all:
     dodger:
       hosts:
         hypervisor:
-          ansible_host: 194.36.147.176
+          ansible_host: smachmeier
           ansible_port: 22
           ansible_user: stefan
