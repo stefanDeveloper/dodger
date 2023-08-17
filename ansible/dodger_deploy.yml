@@ -9,7 +9,7 @@
     - name: gantsign.oh-my-zsh
     - name: default
     - name: robertdebock.update
-    - name: geerlingguy.docker
+    - name: docker
   tasks:
     - name: Clone repository
       ansible.builtin.git:
