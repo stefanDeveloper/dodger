@@ -5,7 +5,7 @@ services:
     command: server
     restart: unless-stopped
     volumes:
-      - "website:/src"
+      - "./website:/src"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.hugo.rule=Host(`${DOMAIN}`)"
