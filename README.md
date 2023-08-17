@@ -28,6 +28,7 @@ This repository provides a complete Docker stack to easily set up your server wi
 * [OpenLDAP](./openldap/README.md) configuration for easy usage with GUI.
 * [Matrix](./matrix/README.md) Synapse server with LDAP configuration.
 * [Hugo](./hugo/README.md) hugo server to deploy simple website.
+* [Wazuh](./wazuh/README.md) to monitor security events of our Docker containers.
 
 ## Getting Started
 
