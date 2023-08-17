@@ -2,7 +2,19 @@
 - name: OS hardening
   ansible.builtin.include_role:
     name: devsec.hardening.os_hardening
+  vars:
+    os_user_pw_ageing: false
+    os_users_without_password_ageing: ["stefan"]
+
+    ufw_default_input_policy: "ACCEPT"
+    ufw_ipt_sysctl: "/etc/ufw/sysctl.conf"
+
+    sysctl_overwrite:
+      # Enable IPv4 traffic forwarding.
+      net.ipv4.ip_forward: 1
 
 - name: SSH hardening
   ansible.builtin.include_role:
     name: devsec.hardening.ssh_hardening
+  vars:
+    ssh_banner: true
