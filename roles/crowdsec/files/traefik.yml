@@ -1,0 +1,4 @@
+filenames:
+  - /logs/traefik/*.log
+labels:
+  type: traefik

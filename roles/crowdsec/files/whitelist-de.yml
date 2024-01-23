@@ -1,0 +1,6 @@
+name: smachmeier/whitelist-de
+description: Whitelist all IPs from Germany
+whitelist:
+  reason: Whitelisted country
+  expression:
+    - evt.Enriched.IsoCode == 'DE'

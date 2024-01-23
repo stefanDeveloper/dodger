@@ -1,0 +1,10 @@
+---
+crowdsec_docker_path: /srv/docker/crowdsec
+
+crowdsec_default_mounts:
+  - crowdsec_config:/etc/crowdsec
+  - crowdsec_data:/var/lib/crowdsec/data
+  # - "{{ crowdsec_docker_path }}/config.yaml:/etc/crowdsec/config.yaml" # This is not necessary
+  - "{{ crowdsec_docker_path }}/acquis.d:/etc/crowdsec/acquis.d"
+
+install_firewall_bouncer: false

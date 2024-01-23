@@ -1,0 +1,57 @@
+---
+- name: Get CrowdSec signing key
+  ansible.builtin.get_url:
+    url: https://packagecloud.io/crowdsec/crowdsec/gpgkey
+    dest: /etc/apt/trusted.gpg.d/crowdsec.asc
+    mode: '0644'
+    force: true
+
+- name: Install CrowdSec repos
+  ansible.builtin.apt_repository:
+    repo: "{{ item }}"
+    filename: crowdsec_crowdsec
+  loop:
+    - deb [signed-by=/etc/apt/trusted.gpg.d/crowdsec.asc] https://packagecloud.io/crowdsec/crowdsec/debian bookworm main
+    - deb-src [signed-by=/etc/apt/trusted.gpg.d/crowdsec.asc] https://packagecloud.io/crowdsec/crowdsec/debian bookworm main
+
+- name: Install Firewall Bouncer IPtables
+  ansible.builtin.package:
+    name: crowdsec-firewall-bouncer-iptables
+    state: present
+
+- name: Set CrowdSec api-key
+  ansible.builtin.lineinfile:
+    path: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+    line: "api_key: {{ fw_bouncer_apikey }}"
+    search_string: api_key
+  notify: Restart Firewall-Bouncer-IPtables
+
+- name: Disable IPv6
+  ansible.builtin.lineinfile:
+    path: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+    line: "disable_ipv6: true"
+    search_string: disable_ipv6
+  notify: Restart Firewall-Bouncer-IPtables
+
+- name: Set LAPI-url
+  ansible.builtin.lineinfile:
+    path: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+    line: "api_url: http://127.0.0.1:{{ lapi_port }}/"
+    search_string: api_url
+  notify: Restart Firewall-Bouncer-IPtables
+
+- name: Enable chains
+  ansible.builtin.lineinfile:
+    path: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+    line: "  - {{ item }}"  # yes these leading spaces are required
+    search_string: "{{ item }}"
+  loop:
+    - FORWARD
+    - DOCKER-USER
+  notify: Restart Firewall-Bouncer-IPtables
+
+- name: Start Firewall Bouncer
+  ansible.builtin.service:
+    name: crowdsec-firewall-bouncer
+    state: started
+    enabled: true

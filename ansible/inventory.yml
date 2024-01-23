@@ -1,8 +1,0 @@
-all:
-  children:
-    dodger:
-      hosts:
-        hypervisor:
-          ansible_host: smachmeier
-          ansible_port: 22
-          ansible_user: stefan

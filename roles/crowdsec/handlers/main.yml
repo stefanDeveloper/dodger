@@ -1,0 +1,5 @@
+---
+- name: Restart Firewall-Bouncer-IPtables
+  ansible.builtin.service:
+    name: crowdsec-firewall-bouncer
+    state: restarted

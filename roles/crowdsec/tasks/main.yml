@@ -1,0 +1,49 @@
+---
+- name: Create {{ crowdsec_docker_path }}/ and subdirectories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+    mode: '0700'
+  loop:
+    - "{{ crowdsec_docker_path }}/"
+    - "{{ crowdsec_docker_path }}/acquis.d/"
+
+- name: Copy crowdsec config
+  ansible.builtin.copy:
+    src: config.yaml
+    dest: "{{ crowdsec_docker_path }}/config.yaml"
+    mode: '0600'
+
+- name: Copy acquisition configs
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ crowdsec_docker_path }}/acquis.d/{{ item }}"
+    mode: '0600'
+  loop: "{{ crowdsec.acquis }}"
+
+- name: Copy de-whitelist
+  ansible.builtin.copy:
+    src: whitelist-de.yml
+    dest: /srv/docker/crowdsec/whitelist-de.yml
+    mode: '0600'
+
+- name: Start CrowdSec Engine Container
+  community.docker.docker_container:
+    image: crowdsecurity/crowdsec:{{ crowdsec.version }}
+    pull: true
+    name: crowdsec
+    recreate: true
+    restart_policy: unless-stopped
+    ports:
+      - 127.0.0.1:{{ lapi_port }}:8080
+      - 6060:6060
+    env:
+      COLLECTIONS: "{{ crowdsec.collections }}"
+      BOUNCER_KEY_firewall: "{{ fw_bouncer_apikey }}"
+    volumes: "{{ crowdsec_default_mounts + crowdsec.log_mounts }}"
+  tags: update-container
+
+- name: Install Firewall-Bouncer-IPtables
+  ansible.builtin.include_tasks:
+    file: firewall_bouncer.yml
+  when: install_firewall_bouncer
