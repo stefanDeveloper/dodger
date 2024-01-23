@@ -1,0 +1,32 @@
+all:
+  children:
+    dodger:
+      hosts:
+        hypervisor:
+          ansible_host: smachmeier
+          ansible_port: 22
+          ansible_user: stefan
+
+          lapi_port: 8090
+          install_firewall_bouncer: true
+          fw_bouncer_apikey: !vault |
+            $ANSIBLE_VAULT;1.1;AES256
+            64633635656432346362383736623465326565336531623364396537303931323831333465373564
+            6138316362653561323033616363663163343161643539330a366237643463626265353634313662
+            64353630356666613865626665616166623362306130393537303262316566653132653339636538
+            3362323933623162650a646361383631383631316566666636626665373633633838363739636633
+            36346162363562343732303332616164363664336264636332633935316536616332633464613262
+            63613033326235633865633339623637326236356330353730303365343363636230363032623936
+            316362396564653034643964333434363936
+          crowdsec:
+            version: latest
+            collections: crowdsecurity/traefik crowdsecurity/nextcloud
+            acquis:
+              - traefik.yml
+            log_mounts:
+              # - /var/log/nginx:/logs/nginx:ro
+              - /var/log/traefik/:/logs/traefik:ro
+              - /var/log/syslog:/var/logs/syslog:ro
+              - /var/log/auth.log:/var/log/auth.log:ro
+            whitelist:
+              - /srv/docker/crowdsec/whitelist-de.yml:/etc/crowdsec/parsers/s02-enrich/whitelist-de.yml
