@@ -5,3 +5,5 @@ wordpress
 ./**/.venv
 .venv
 .vscode
+.DS_Store
+pw_vault.txt
