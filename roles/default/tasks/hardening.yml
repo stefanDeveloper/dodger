@@ -18,3 +18,5 @@
     name: devsec.hardening.ssh_hardening
   vars:
     ssh_banner: true
+
+# code: language=ansible

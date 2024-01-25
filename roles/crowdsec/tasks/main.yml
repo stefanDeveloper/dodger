@@ -35,15 +35,17 @@
     recreate: true
     restart_policy: unless-stopped
     ports:
-      - 127.0.0.1:{{ lapi_port }}:8080
+      - 127.0.0.1:{{ crowdsec_lapi_port }}:8080
       - 6060:6060
     env:
       COLLECTIONS: "{{ crowdsec.collections }}"
-      BOUNCER_KEY_firewall: "{{ fw_bouncer_apikey }}"
+      BOUNCER_KEY_firewall: "{{ crowdsec_fw_bouncer_apikey }}"
     volumes: "{{ crowdsec_default_mounts + crowdsec.log_mounts + crowdsec.whitelist}}"
   tags: update-container
 
 - name: Install Firewall-Bouncer-IPtables
   ansible.builtin.include_tasks:
     file: firewall_bouncer.yml
-  when: install_firewall_bouncer
+  when: crowdsec_install_firewall_bouncer
+
+# code: language=ansible

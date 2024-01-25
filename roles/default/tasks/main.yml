@@ -33,3 +33,5 @@
   when: "item.username != 'root'"
   with_items:
     - "{{ users }}"
+
+# code: language=ansible
