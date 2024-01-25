@@ -1,0 +1,59 @@
+---
+
+- name: Create OpenLDAP container
+  community.docker.docker_container:
+    name: openldap
+    image: "osixia/openldap:latest"
+    restart_policy: "unless-stopped"
+    env:
+      LDAP_BASE_DN: "{{ openldap_base_dn }}"
+      LDAP_ORGANISATION: "Machmeier-IT"
+      LDAP_DOMAIN: "{{ openldap_domain }}"
+      LDAP_ADMIN_PASSWORD: "{{ openldap_password }}"
+      LDAP_REPLICATION: false
+      LDAP_READONLY_USER: false
+      LDAP_TLS_VERIFY_CLIENT: never
+      LDAP_RFC2307BIS_SCHEMA: true
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: true
+    volumes:
+      - "{{ openldap_docker_path }}/openldap_data:/var/lib/ldap"
+      - "{{ openldap_docker_path }}/slapd_data:/etc/ldap/slapd.d"
+    networks:
+      - name: proxy
+
+- name: Create OpenLDAP Manager container
+  community.docker.docker_container:
+    name: openldap-manager
+    image: wheelybird/ldap-user-manager:latest
+    restart_policy: "unless-stopped"
+    env:
+      LDAP_REQUIRE_STARTTLS: "false"
+      LDAP_TLS_VERIFY_CLIENT: never
+      LDAP_URI: "ldaps://{{ openldap_hostname }}"
+      LDAP_BASE_DN: "{{ openldap_base_dn }}"
+      LDAP_ADMINS_GROUP: "admins"
+      LDAP_ADMIN_BIND_PWD: "{{ openldap_password }}"
+      LDAP_ADMIN_BIND_DN: "cn=admin,{{ openldap_base_dn }}"
+      SITE_NAME: "Machmeier-IT"
+      SERVER_HOSTNAME: "https://{{ openldap_domain }}"
+      NO_HTTPS: "true"
+
+      SMTP_HOSTNAME: "{{ gitlab_smtp_address }}"
+      SMTP_HOST_PORT: "{{ gitlab_smtp_port }}"
+      SMTP_USERNAME: "{{ gitlab_smtp_mail }}"
+      SMTP_PASSWORD: "{{ gitlab_smtp_password }}"
+      SMTP_USE_TLS: "true"
+      EMAIL_FROM_ADDRESS: "{{ gitlab_smtp_mail }}"
+      EMAIL_FROM_NAME: "OpenLDAP Machmeier-IT"
+    labels:
+      traefik.enable: true"
+      traefik.http.routers.ldapmanager.rule: Host(`{{ openldap_domain }}`)
+      traefik.http.routers.ldapmanager.entrypoints: websecure
+      traefik.http.routers.ldapmanager.tls.certresolver: mytlschallenge
+      traefik.http.services.ldapmanager.loadbalancer.server.port: 80
+      traefik.http.routers.ldapmanager.middlewares: ldapmanager-auth
+      traefik.http.middlewares.ldapmanager-auth.basicauth.users: admin:{SHA}${DASHBOARD_PASSWORD}
+    networks:
+      - name: proxy
+
+# code: language=ansible

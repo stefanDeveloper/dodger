@@ -1,0 +1,5 @@
+---
+
+openldap_docker_path: "/srv/docker/openldap"
+
+# code: language=ansible
