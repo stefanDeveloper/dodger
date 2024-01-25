@@ -40,7 +40,7 @@
     env:
       COLLECTIONS: "{{ crowdsec.collections }}"
       BOUNCER_KEY_firewall: "{{ fw_bouncer_apikey }}"
-    volumes: "{{ crowdsec_default_mounts + crowdsec.log_mounts }}"
+    volumes: "{{ crowdsec_default_mounts + crowdsec.log_mounts + crowdsec.whitelist}}"
   tags: update-container
 
 - name: Install Firewall-Bouncer-IPtables
