@@ -1,0 +1,11 @@
+---
+
+- name: Start watchtower
+  community.docker.docker_container:
+    name: watchtower
+    image: "containrrr/watchtower"
+    restart_policy: "unless_stopped"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      
+# code: language=ansible

@@ -3,3 +3,5 @@
   ansible.builtin.service:
     name: crowdsec-firewall-bouncer
     state: restarted
+
+# code: language=ansible
