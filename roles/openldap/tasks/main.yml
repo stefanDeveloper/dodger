@@ -52,7 +52,7 @@
       traefik.http.routers.ldapmanager.tls.certresolver: mytlschallenge
       traefik.http.services.ldapmanager.loadbalancer.server.port: 80
       traefik.http.routers.ldapmanager.middlewares: ldapmanager-auth
-      traefik.http.middlewares.ldapmanager-auth.basicauth.users: admin:{SHA}${DASHBOARD_PASSWORD}
+      traefik.http.middlewares.ldapmanager-auth.basicauth.users: admin:{SHA}${{ traefik_dashboard_password }}
     networks:
       - name: proxy
 

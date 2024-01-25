@@ -1,0 +1,102 @@
+---
+- name: Create Docker Network for GitLab
+  community.docker.docker_network:
+    name: "gitlab"
+    ipam_config:
+      - subnet: 172.28.0.0/24
+
+- name: Run GitLab Docker container
+  community.docker.docker_container:
+    image: "gitlab/gitlab-ce:latest"
+    name: "gitlab"
+    restart_policy: "unless-stopped"
+    recreate: true
+    ports:
+      - "{{ gitlab_shell_ssh_port }}:22"
+    networks:
+      - name: gitlab
+      - name: proxy
+    volumes:
+      - "{{ gitlab_docker_path }}/config:/etc/gitlab:Z"
+      - "{{ gitlab_docker_path }}/logs:/var/log/gitlab:Z"
+      - "{{ gitlab_docker_path }}/data:/var/opt/gitlab:Z"
+      - "/etc/localtime:/etc/localtime:ro"
+    hostname: "{{ gitlab_domain }}"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.gitlab.rule: "Host(`{{ gitlab_domain }}`)" 
+      traefik.http.routers.gitlab.entrypoints: "websecure" 
+      traefik.http.routers.gitlab.tls.certresolver: "mytlschallenge" 
+      traefik.http.routers.gitlab.middlewares: "gitlab-headers" 
+      traefik.http.routers.gitlab.service: "gitlab" 
+      
+      traefik.http.middlewares.gitlab-headers.headers.customrequestheaders.X_FORWARDED_PROTO: "https" 
+      traefik.http.middlewares.gitlab-headers.headers.customrequestheaders.X_Forwarded-Ssl: "on" 
+      traefik.http.middlewares.gitlab-headers.headers.customresponseheaders.X_FORWARDED_PROTO: "https" 
+      traefik.http.middlewares.gitlab-headers.headers.customresponseheaders.X_Forwarded-Ssl: "on" 
+      traefik.http.services.gitlab.loadbalancer.server.port: "80" 
+
+      traefik.http.routers.gitlab-registry.rule: "Host(`{{ gitlab_registry_domain }}`)" 
+      traefik.http.routers.gitlab-registry.entrypoints: "websecure" 
+      traefik.http.routers.gitlab-registry.tls.certresolver: "mytlschallenge" 
+      traefik.http.routers.gitlab-registry.service: "gitlab-registry" 
+      traefik.http.services.gitlab-registry.loadbalancer.server.port: "8500"
+    capabilities:
+      - SYS_ADMIN
+    env:
+      GITLAB_SHELL_SSH_PORT: "30022"
+      GITLAB_OMNIBUS_CONFIG: >
+        external_url 'https://{{ gitlab_domain }}'
+        nginx['listen_https'] = false
+        nginx['listen_port'] = 80
+        nginx['proxy_set_headers'] = {
+          'X-Forwarded-Proto' => 'https',
+          'X-Forwarded-Ssl' => 'on'
+        }
+
+        gitlab_rails['backup_upload_remote_directory'] = 's3-backup-bucket'
+        gitlab_rails['gitlab_shell_ssh_port'] = 22
+
+        gitlab_rails['smtp_enable'] = true
+        gitlab_rails['smtp_address'] = "{{ gitlab_smtp_address }}"
+        gitlab_rails['smtp_port'] = {{ gitlab_smtp_port }}
+        gitlab_rails['smtp_user_name'] = "{{ gitlab_smtp_mail }}"
+        gitlab_rails['smtp_password'] = "{{ gitlab_smtp_password}}"
+        gitlab_rails['smtp_domain'] = "{{ gitlab_smtp_domain }}"
+        gitlab_rails['gitlab_email_from'] = "{{ gitlab_smtp_mail_from }}"
+        gitlab_rails['gitlab_email_reply_to'] = "{{ gitlab_smtp_mail_to }}"
+        gitlab_rails['smtp_authentication'] = "login"
+        gitlab_rails['smtp_enable_starttls_auto'] = true
+        gitlab_rails['smtp_openssl_verify_mode'] = "peer"
+
+        gitlab_rails['ldap_enabled'] = true
+        gitlab_rails['ldap_servers'] = {
+        'main' => {
+          'label' => 'OpenLDAP',
+          'host' =>  '{{ openldap_hostname }}',
+          'port' => {{ openldap_port }},
+          'uid' => 'uid',
+          'encryption' => 'plain',
+          'verify_certificates' => false,
+          'bind_dn' => 'cn=admin,{{ openldap_base_dn }}',
+          'password' => '{{ openldap_password }}',
+          'active_directory' => false,
+          'base' => '{{ openldap_base_dn }}',
+          'group_base' => 'ou=groups,{{ openldap_base_dn }}',
+          'admin_group' => 'admins',
+          'attributes' => { 'username' => ['uid'], 'email' => ['mail', 'email'] },
+          }
+        }
+    
+# - name: Run Gitlab reconfigure to assure correct file permissions
+#   community.docker.docker_container_exec:
+#     container: "gitlab"
+#     command: gitlab-ctl reconfigure
+#   changed_when: false
+
+- name: Install Gitlab Runner
+  when: gitlab_runner_enabled
+  ansible.builtin.include_tasks:
+    file: "install_gitlab_runner.yml"
+
+# code: language=ansible

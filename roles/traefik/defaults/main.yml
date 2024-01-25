@@ -1,0 +1,5 @@
+---
+
+traefik_docker_path: "/srv/docker/traefik"
+
+# code: language=ansible
