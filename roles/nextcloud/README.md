@@ -37,13 +37,3 @@ tar -czvg PATH_TO_YOUR_NEXTCLOUD/snapshot.file -f PATH_TO_YOUR_NEXTCLOUD/nextclo
 # Set maintenance mode off
 docker exec --user www-data nextcloud_nextcloud_1 php occ maintenance:mode --off
 ```
-
-### Run Cron
-
-```sh
-docker exec -u www-data CONTAINER_NAME php cron.php
-```
-
-## CoTURN
-
-Helps to integrate Nextcloud Talks, however, this part is still under investigation. Go to our CoTURN[documentation](./coturn/README.md) to get the latest information.

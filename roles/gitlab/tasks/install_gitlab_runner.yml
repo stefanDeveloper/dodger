@@ -5,7 +5,7 @@
     image: "gitlab/gitlab-runner:latest"
     restart_policy: "unless-stopped"
     networks:
-      - name: gitlab
+      - name: proxy
     volumes:
       - "{{ gitlab_docker_path }}/gitlab-runner/config:/etc/gitlab-runner"
       - "/var/run/docker.sock:/var/run/docker.sock"
