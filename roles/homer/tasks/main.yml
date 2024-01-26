@@ -3,20 +3,26 @@
   ansible.builtin.file:
     path: "{{ homer_docker_path }}"
     state: directory
-    mode: 700
+    mode: 0700
+    owner: stefan
+    group: stefan
 
 - name: Set homer config
   ansible.builtin.template:
     src: config.yml.j2
     dest: "{{ homer_docker_path }}/config.yml"
+    mode: 0700
+    owner: stefan
+    group: stefan
 
 - name: Install homer Docker Container
   community.docker.docker_container:
     name: "homer"
     hostname: "homer"
     image: b4bz/homer
+    restart_policy: unless-stopped
     volumes:
-      - "{{ homer_docker_path }}:/www/assets:ro"
+      - "{{ homer_docker_path }}/config.yml:/www/assets/config.yml:ro"
     labels:
       traefik.enable: "true"
       traefik.http.routers.homer.rule: "Host(`{{ homer_domain }}`)"
@@ -25,9 +31,10 @@
       traefik.http.services.homer.loadbalancer.server.port: "8080"
       traefik.http.routers.homer.middlewares: "homer-auth"
       traefik.http.middlewares.homer-auth.basicauth.users: "admin:{SHA}{{ traefik_dashboard_password }}"
-    # env:
-    #   UID: "1000"
-    #   GID: "1000"
+    env:
+      UID: "1000"
+      GID: "1000"
+      INIT_ASSETS: "1"
     networks:
       - name: "{{ traefik_network }}"
 
