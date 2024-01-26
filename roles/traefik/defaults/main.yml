@@ -2,4 +2,15 @@
 
 traefik_docker_path: "/srv/docker/traefik"
 
+lp_logrotate_confd:
+  - path: traefik
+    conf: |
+      /var/log/traefik/traefik.log {
+              weekly
+              rotate 3
+              size 100M
+              compress
+              delaycompress
+      }
+
 # code: language=ansible
