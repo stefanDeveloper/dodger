@@ -1,4 +1,5 @@
 ---
+
 gitlab_docker_path: "/srv/docker/gitlab"
 
 # code: language=ansible
