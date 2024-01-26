@@ -6,13 +6,16 @@
   vars_files:
     - "users.yml"
   roles:
-    # - name: gantsign.oh-my-zsh
-    # - name: default
-    # - name: robertdebock.update
-    # - name: docker
+    - name: gantsign.oh-my-zsh
+    - name: default
+    - name: robertdebock.update
+    - name: docker
     - name: crowdsec
-  # tasks:
-  #   - name: Clone repository
-  #     ansible.builtin.git:
-  #       repo: https://github.com/stefanDeveloper/dodger.git
-  #       dest: /srv/dodger
+    - name: traefik
+    - name: openldap
+    - name: gitlab
+    - name: homer
+    - name: nextcloud
+    - name: watchtower
+
+# code: language=ansible
