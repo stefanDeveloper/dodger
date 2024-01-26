@@ -31,6 +31,7 @@
       - "443:443"
     volumes:
       - "{{ traefik_docker_path }}/letsencrypt:/letsencrypt"
+      - "/var/log/traefik/:/var/log/traefik/"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - traefik.enable: true
