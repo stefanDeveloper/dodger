@@ -87,4 +87,11 @@
     volumes:
       - "{{ nextcloud_docker_path }}/nextcloud-www:/var/www/html"
 
+- name: Write nextcloud background job
+  ansible.builtin.cron:
+    name: nextcloud_background_job
+    user: root
+    job: docker exec -u www-data nextcloud php /var/www/html/cron.php
+    minute: 5
+
 # code: language=ansible
