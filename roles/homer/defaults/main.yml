@@ -1,0 +1,5 @@
+---
+
+homer_docker_path: "/srv/docker/homer"
+
+# code: language=ansible

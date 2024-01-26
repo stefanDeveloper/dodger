@@ -32,8 +32,8 @@
     image: crowdsecurity/crowdsec:{{ crowdsec.version }}
     pull: true
     name: crowdsec
-    recreate: true
-    restart_policy: unless-stopped
+    healthcheck:
+      test: ["CMD", "cscli", "version"]
     ports:
       - 127.0.0.1:{{ crowdsec_lapi_port }}:8080
       - 6060:6060
