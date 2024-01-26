@@ -45,7 +45,7 @@
       - SYS_ADMIN
     env:
       GITLAB_SHELL_SSH_PORT: "30022"
-      GITLAB_OMNIBUS_CONFIG: >
+      GITLAB_OMNIBUS_CONFIG: |-
         external_url 'https://{{ gitlab_domain }}'
         nginx['listen_https'] = false
         nginx['listen_port'] = 80
