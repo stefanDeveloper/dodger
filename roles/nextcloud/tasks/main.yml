@@ -1,0 +1,90 @@
+---
+- name: Create Nextcloud network
+  community.docker.docker_network:
+    name: nextcloud
+    driver: bridge
+    ipam_driver: default
+    ipam_config:
+      - subnet: 172.30.0.0/24
+
+- name: Create Postgres DB Container
+  community.docker.docker_container:
+    name: nextcloud_postgres
+    hostname: nextcloud_postgres
+    image: postgres:13
+    restart_policy: unless-stopped
+    tty: true
+    interactive: true
+    command: "postgres -c 'max_connections=200'"
+    networks:
+      - name: proxy
+    env:
+      POSTGRES_USER: "{{ nextcloud_postgres_username }}"
+      POSTGRES_PASSWORD: "{{ nextcloud_postgres_password }}"
+      POSTGRES_DB: "{{ nextcloud_postgres_db }}"
+    volumes:
+      - "{{ nextcloud_docker_path }}/nextcloud-db:/var/lib/postgresql/data"
+
+- name: Create Redis Container
+  community.docker.docker_container:
+    name: nextcloud_redis
+    hostname: nextcloud_redis
+    restart_policy: unless-stopped
+    image: redis:latest
+    command: "redis-server --requirepass {{ nextcloud_redis_password }}"
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ nextcloud_docker_path }}/redis:/var/lib/redis"
+
+- name: Create ClamAV Container
+  community.docker.docker_container:
+    name: "nextcloud_clamav"
+    hostname: "nextcloud_clamav"
+    image: "clamav/clamav:stable_base"
+    networks:
+      - name: proxy
+    volumes:
+      - /var/docker/clamav/virus_db/:/var/lib/clamav/
+    restart_policy: unless-stopped
+
+- name: Create Nextcloud container
+  community.docker.docker_container:
+    name: "nextcloud"
+    hostname: "nextcloud"
+    image: "nextcloud:latest"
+    restart_policy: unless-stopped
+    networks:
+      # - name: nextcloud
+      # - name: openldap
+      - name: proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.nextcloud.middlewares: "nextcloud,nextcloud-dav"
+      traefik.http.routers.nextcloud.tls.certresolver: "mytlschallenge"
+      traefik.http.routers.nextcloud.rule: "Host(`{{ nextcloud_domain }}`)"
+      traefik.http.middlewares.nextcloud.headers.customFrameOptionsValue: "ALLOW-FROM https://{{ domain }}"
+      traefik.http.middlewares.nextcloud.headers.contentSecurityPolicy: "frame-ancestors 'self' {{ domain }} *.{{ domain }}"
+      traefik.http.middlewares.nextcloud.headers.customresponseheaders.X-Frame-Options: "SAMEORIGIN"
+      traefik.http.middlewares.nextcloud.headers.stsSeconds: "155520011"
+      traefik.http.middlewares.nextcloud.headers.stsIncludeSubdomains: "true"
+      traefik.http.middlewares.nextcloud.headers.stsPreload: "true"
+
+      traefik.http.middlewares.nextcloud-dav.redirectregex.regex: "https://(.*)/.well-known/(card|cal)dav"
+      traefik.http.middlewares.nextcloud-dav.redirectregex.replacement: "https://{{ nextcloud_domain }}/remote.php/dav/"
+    env:
+      POSTGRES_DB: "{{ nextcloud_postgres_db }}"
+      POSTGRES_USER: "{{ nextcloud_postgres_username }}"
+      POSTGRES_PASSWORD: "{{ nextcloud_postgres_password }}"
+      POSTGRES_HOST: "nextcloud_postgres"
+      NEXTCLOUD_ADMIN_USER: "admin"
+      NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
+      REDIS_HOST: "nextcloud_redis"
+      REDIS_HOST_PASSWORD: "{{ nextcloud_redis_password }}"
+      NEXTCLOUD_TRUSTED_DOMAINS: "{{ nextcloud_domain }}"
+      TRUSTED_PROXIES: "172.18.0.0/16"
+      OVERWRITEPROTOCOL: "https"
+    volumes:
+      - "{{ nextcloud_docker_path }}/nextcloud-www:/var/www/html"
+
+# code: language=ansible
