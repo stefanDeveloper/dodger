@@ -1,4 +1,10 @@
 ---
+- name: Create Traefik network
+  community.docker.docker_network:
+    name: proxy
+    ipam_config:
+      - subnet: 172.18.0.0/16 
+    
 - name: Start Traefik
   community.docker.docker_container:
     name: traefik
@@ -7,7 +13,6 @@
     command: 
       - "--api=true"
       - "--accesslog=true"
-      - "--pilot.token=be0ef0ec-7558-40a6-bb46-0297f6d402fa"
       - "--accesslog.filepath=/var/log/traefik/traefik.log"
       - "--api.dashboard=true"
       - "--providers.docker=true"
@@ -35,7 +40,7 @@
       - traefik.http.routers.traefik.tls.certresolver: mytlschallenge
       - traefik.http.routers.traefik.entrypoints: websecure
       - traefik.http.routers.traefik.middlewares: dashboardauth
-      - traefik.http.middlewares.dashboardauth.basicauth.users: admin:{SHA}${{ traefik_dashboard_password }}
+      - traefik.http.middlewares.dashboardauth.basicauth.users: admin:{SHA}{{ traefik_dashboard_password }}
 
         # Global redirection: http to https
       - traefik.http.routers.http-catchall.rule: HostRegexp(`{host:(www.)?.+}`)
