@@ -15,7 +15,6 @@
     hostname: "openldap"
     image: "osixia/openldap:latest"
     restart_policy: "unless-stopped"
-    recreate: true
     env:
       LDAP_BASE_DN: "{{ openldap_base_dn }}"
       LDAP_ORGANISATION: "Machmeier-IT"
@@ -38,7 +37,6 @@
     hostname: "openldap-manager"
     image: wheelybird/ldap-user-manager:latest
     restart_policy: "unless-stopped"
-    recreate: true
     env:
       LDAP_REQUIRE_STARTTLS: "false"
       LDAP_TLS_VERIFY_CLIENT: "never"
