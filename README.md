@@ -20,11 +20,8 @@ This repository provides a complete Docker stack to easily set up your server wi
 * [Traefik](./traefik/README.md) as a reverse proxy to route your request (mandatory)
 * [Wordpress](./blog/README.md) just a simple Wordpress blog page
 * [GitLab](./gitlab/README.md) for coding
-* [Portainer](./portainer/README.md) helps you to maintain your containers and images
 * [Nextcloud](./Nextcloud/README.md) one of my favorite private clouds :heart:
 * [Homer](./homer/README.md) just a landing page with links
-* [Resilio](./resilio/README.md) allows you to sync your data with others, helpful to share backups
-* [Seafile](./seafile/README.md) another cloud (not used by me anymore)
 * [OpenLDAP](./openldap/README.md) configuration for easy usage with GUI.
 * [Matrix](./matrix/README.md) Synapse server with LDAP configuration.
 * [Hugo](./hugo/README.md) hugo server to deploy simple website.
