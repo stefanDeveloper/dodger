@@ -1,0 +1,113 @@
+---
+
+# - name: Create folder for Matrix
+#   ansible.builtin.file:
+#     path: "{{ item.path }}"
+#     state: directory
+#     mode:  "{{ item.mode }}"
+#     owner: "{{ item.owner }}"
+#     group: "{{ item.group }}"
+#     recurse: true
+#   with_items:
+#     - { path: "{{ matrix_docker_path }}", group: root, owner: root, mode: "0700" }
+#     - { path: "{{ matrix_docker_path }}/matrix-synapse-files", group: "991", owner: "991", mode: "0700" }
+#     - { path: "{{ matrix_docker_path }}/matrix-synapse-schemas", group: "70", owner: "70", mode: "0700" }
+#     - { path: "{{ matrix_docker_path }}/matrix-signal-schemas", group: "70", owner: "70", mode: "0700" }
+#     - { path: "{{ matrix_docker_path }}/matrix-telegram-schemas", group: "70", owner: "70", mode: "0700" }
+#     - { path: "{{ matrix_docker_path }}/matrix-whatsapp-schemas", group: "70", owner: "70", mode: "0700" }
+#     - { path: "{{ matrix_docker_path }}/matrix-synapse-nginx", group: root, owner: root, mode: "0700" }
+#     - { path: "{{ matrix_docker_path }}/matrix-synapse-nginx/www", group: root, owner: root, mode: "0755" }
+#     - { path: "{{ matrix_docker_path }}/matrix-synapse-nginx/www/.well-known", group: root, owner: root, mode: "0755" }
+#     - { path: "{{ matrix_docker_path }}/matrix-synapse-nginx/www/.well-known/matrix", group: root, owner: root, mode: "0755" }
+
+# - name: Copy homeserver configuration
+#   ansible.builtin.template:
+#     src: homeserver.yaml.j2
+#     dest: "{{ matrix_docker_path }}/matrix-synapse-files/homeserver.yaml"
+#     mode: 0700
+#     owner: 991
+#     group: 991
+
+# - name: Copy NGINX configuration
+#   ansible.builtin.template:
+#     src: nginx/matrix.conf.j2
+#     dest: "{{ matrix_docker_path }}/matrix-synapse-nginx/matrix.conf"
+#     mode: 0700
+#     owner: root
+#     group: root
+
+# - name: Copy NGINX configuration
+#   ansible.builtin.template:
+#     src: nginx/www/.well-known/matrix/{{ item }}.j2
+#     dest: "{{ matrix_docker_path }}/matrix-synapse-nginx/www/.well-known/matrix/{{ item }}"
+#     mode: 0755
+#     owner: root
+#     group: root
+#   with_items:
+#     - client
+#     - server
+
+- name: Install Matrix container
+  community.docker.docker_container:
+    name: "matrix-synapse"
+    hostname: "matrix-synapse"
+    image: matrixdotorg/synapse:latest
+    restart_policy: unless-stopped
+    env:
+      SYNAPSE_CONFIG_PATH: /data/homeserver.yaml
+    ports:
+      - "8448:8448/tcp"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.synapse.rule: "Host(`{{ matrix_synapse_domain }}`)"
+      traefik.http.routers.synapse.entrypoints: "websecure"
+      traefik.http.routers.synapse.tls.certresolver: "mytlschallenge"
+      traefik.http.services.synapse.loadbalancer.server.port: "8008"
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ matrix_docker_path }}/matrix-synapse-files:/data"
+
+- name: Install NGINX container
+  community.docker.docker_container:
+    name: "matrix-synapse-nginx"
+    hostname: "matrix-synapse-nginx"
+    image: nginx:latest
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.nginx.rule: "Host(`{{ matrix_domain }}`)"
+      traefik.http.routers.nginx.entrypoints: "websecure"
+      traefik.http.routers.nginx.tls.certresolver: "mytlschallenge"
+      traefik.http.services.nginx.loadbalancer.server.port: "80"
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ matrix_docker_path }}/matrix-synapse-nginx/matrix.conf:/etc/nginx/conf.d/default.conf"
+      - "{{ matrix_docker_path }}/matrix-synapse-nginx/www:/var/www/"
+
+- name: Install Postgresql for Matrix container
+  community.docker.docker_container:
+    name: "matrix-synapse-db"
+    hostname: "matrix-synapse-db"
+    image: postgres:12-alpine
+    env:
+      POSTGRES_DB: "{{ matrix_db_name }}"
+      POSTGRES_USER: "{{ matrix_db_user }}"
+      POSTGRES_PASSWORD: "{{ matrix_db_password }}"
+      POSTGRES_INITDB_ARG: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ matrix_docker_path }}/matrix-synapse-schemas:/var/lib/postgresql/data"
+
+- name: Include bridges
+  ansible.builtin.include_tasks:
+    file: "{{ item }}"
+  with_items:
+    - "install_signal_bridge.yml"
+    - "install_telegram_bridge.yml"
+    - "install_whatsapp_bridge.yml"
+
+
+# code: language=ansible
