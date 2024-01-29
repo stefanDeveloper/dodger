@@ -32,6 +32,7 @@
     image: crowdsecurity/crowdsec:{{ crowdsec.version }}
     pull: true
     name: crowdsec
+    restart_policy: unless-stopped
     healthcheck:
       test: ["CMD", "cscli", "version"]
     ports:
