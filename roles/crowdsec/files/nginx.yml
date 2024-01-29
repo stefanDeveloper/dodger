@@ -1,0 +1,5 @@
+---
+filenames:
+  - /logs/nginx/*.log
+labels:
+  type: nginx
