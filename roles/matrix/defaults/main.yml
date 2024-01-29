@@ -1,0 +1,17 @@
+---
+
+matrix_docker_path: "/srv/docker/matrix"
+
+matrix_db_name: "synapse"
+matrix_db_user: "synapse"
+
+mautrix_whatsapp_db_name: "synapse"
+mautrix_whatsapp_db_user: "synapse"
+
+mautrix_telegram_db_name: "synapse"
+mautrix_telegram_db_user: "synapse"
+
+mautrix_signal_db_name: "mautrixsignal"
+mautrix_signal_db_user: "mautrixsignal"
+
+# code: language=ansible

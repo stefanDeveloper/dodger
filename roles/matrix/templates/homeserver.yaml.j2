@@ -23,22 +23,26 @@ listeners:
 database:
   name: psycopg2
   args:
-    user: synapse
-    password: YOUR_SECRET
-    database: synapse
-    host: matrix-db
+    user: {{ matrix_db_user }}
+    password: {{ matrix_db_password }}
+    database: {{ matrix_db_name }}
+    host: matrix-synapse-db
     cp_min: 5
     cp_max: 10
 log_config: "/data/matrix.log.config"
 media_store_path: /data/media_store
-registration_shared_secret: "YOUR_SECRET"
+registration_shared_secret: "{{ matrix_registration_shared_secret }}"
 report_stats: true
-macaroon_secret_key: "YOUR_SECRET"
-form_secret: "YOUR_SECRET"
+macaroon_secret_key: "{{ matrix_macaroon_secret_key }}"
+form_secret: "{{ matrix_form_secret }}"
 signing_key_path: "/data/matrix.signing.key"
+public_baseurl: https://{{ matrix_synapse_domain }}/
+app_service_config_files:
+- "/data/registration-signal.yaml"
+- "/data/registration-whatsapp.yaml"
+- "/data/registration-telegram.yaml"
 trusted_key_servers:
-  - server_name: "matrix.smachmeier.de"
-
+  - server_name: "{{ matrix_domain }}"
 enable_search: true
 
 user_directory:
@@ -49,16 +53,16 @@ modules:
  - module: "ldap_auth_provider.LdapAuthProviderModule"
    config:
      enabled: true
-     uri: "ldap://openldap:389"
+     uri: "ldap://{{ openldap_hostname }}:{{ openldap_port}}"
      start_tls: false
-     base: "BASE_DN"
+     base: "{{ openldap_base_dn }}"
      mode: "search"
      attributes:
         uid: "uid"
         mail: "mail"
         name: "cn"
-     bind_dn: "cn=admin,BASE_DN"
-     bind_password: "YOUR_SECRET"
-     filter: "(memberof=cn=matrix,ou=groups,BASE_DN)"
+     bind_dn: "cn=admin,{{ openldap_base_dn }}"
+     bind_password: "{{ openldap_password }}"
+     filter: "(memberof=cn=matrix,ou=groups,{{ openldap_base_dn }})"
      tls_options:
        validate: false

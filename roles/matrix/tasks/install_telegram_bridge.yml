@@ -1,0 +1,30 @@
+---
+
+- name: Install Mautrix Telegram container
+  community.docker.docker_container:
+    name: "mautrix-telegram"
+    hostname: "mautrix-telegram"
+    image: "dock.mau.dev/mautrix/telegram:latest"
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ matrix_docker_path }}/matrix-synapse-files/matrix-telegram:/data"
+
+- name: Install Postgresql for Matrix container
+  community.docker.docker_container:
+    name: "mautrix-telegram-db"
+    hostname: "mautrix-telegram-db"
+    image: postgres:12-alpine
+    restart_policy: unless-stopped
+    env:
+      POSTGRES_DB: "{{ mautrix_telegram_db_name }}"
+      POSTGRES_USER: "{{ mautrix_telegram_db_user }}"
+      POSTGRES_PASSWORD: "{{ mautrix_telegram_db_password }}"
+      POSTGRES_INITDB_ARG: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ matrix_docker_path }}/matrix-telegram-schemas:/var/lib/postgresql/data"
+
+# code: language=ansible

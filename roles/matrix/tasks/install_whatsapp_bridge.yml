@@ -1,0 +1,30 @@
+---
+
+- name: Install Mautrix WhatsApp container
+  community.docker.docker_container:
+    name: "mautrix-whatsapp"
+    hostname: "mautrix-whatsapp"
+    image: "dock.mau.dev/mautrix/whatsapp:latest"
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ matrix_docker_path }}/matrix-synapse-files/matrix-whatsapp:/data"
+
+- name: Install Postgresql for Matrix container
+  community.docker.docker_container:
+    name: "mautrix-whatsapp-db"
+    hostname: "mautrix-whatsapp-db"
+    image: postgres:12-alpine
+    restart_policy: unless-stopped
+    env:
+      POSTGRES_DB: "{{ mautrix_whatsapp_db_name }}"
+      POSTGRES_USER: "{{ mautrix_whatsapp_db_user }}"
+      POSTGRES_PASSWORD: "{{ mautrix_whatsapp_db_password }}"
+      POSTGRES_INITDB_ARG: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ matrix_docker_path }}/matrix-whatsapp-schemas:/var/lib/postgresql/data"
+
+# code: language=ansible
