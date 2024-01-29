@@ -1,0 +1,41 @@
+---
+
+- name: Install Mautrix Signal container
+  community.docker.docker_container:
+    name: "mautrix-signal"
+    hostname: "mautrix-signal"
+    image: "dock.mau.dev/mautrix/signal:latest"
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ matrix_docker_path }}/matrix-synapse-files/matrix-signal:/data"
+
+- name: Install Signald container
+  community.docker.docker_container:
+    name: "signald"
+    hostname: "signald"
+    image: "docker.io/signald/signald"
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ matrix_docker_path }}/signald:/signald"
+
+- name: Install Postgresql for Matrix container
+  community.docker.docker_container:
+    name: "mautrix-signal-db"
+    hostname: "mautrix-signal-db"
+    image: postgres:13-alpine
+    restart_policy: unless-stopped
+    env:
+      POSTGRES_DB: "{{ mautrix_signal_db_name }}"
+      POSTGRES_USER: "{{ mautrix_signal_db_user }}"
+      POSTGRES_PASSWORD: "{{ mautrix_signal_db_password }}"
+      POSTGRES_INITDB_ARG: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ matrix_docker_path }}/matrix-signal-schemas:/var/lib/postgresql/data"
+
+# code: language=ansible

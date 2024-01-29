@@ -1,23 +1,6 @@
 # Synapse Matrix Server
 
-To run docker-compose up you have to adapt `.env` and replace `YOUR_DOMAIN.TLD` and `YOUR_SECRET` in `nginx/` and `files`.
-
-## Usage
-
-Set the following environment variables:
-
-```bash
-DOMAIN=
-DB_PASSWORD=
-```
-
-And then run
-
-```sh
-docker-compose up -d
-```
-
-### Bridges
+## Bridges
 
 > For more information, please read the official documentation of Mautrix https://docs.mau.fi/bridges/index.html
 

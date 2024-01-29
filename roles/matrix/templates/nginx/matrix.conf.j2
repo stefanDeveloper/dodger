@@ -1,6 +1,6 @@
 server {
   listen         80 default_server;
-  server_name    matrix.YOUR_DOMAIN.TLD;
+  server_name    {{ matrix_domain }};
 
  # Traefik -> nginx -> synapse
   location /_matrix {
