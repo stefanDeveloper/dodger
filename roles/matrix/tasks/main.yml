@@ -91,6 +91,7 @@
     name: "matrix-synapse-db"
     hostname: "matrix-synapse-db"
     image: postgres:12-alpine
+    restart_policy: unless-stopped
     env:
       POSTGRES_DB: "{{ matrix_db_name }}"
       POSTGRES_USER: "{{ matrix_db_user }}"
