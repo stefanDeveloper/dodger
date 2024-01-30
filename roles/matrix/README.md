@@ -6,6 +6,6 @@
 
 Supported bridges in this setting
 
-- [Signal](docker-compose.signal.yaml)
-- [Telegram](docker-compose.telegram.yaml)
-- [WhatsApp](docker-compose.whatsapp.yaml)
+- [Signal](tasks/install_signal_bridge.yml)
+- [Telegram](tasks/install_telegram_bridge.yml)
+- [WhatsApp](tasks/install_whatsapp_bridge.yml)
