@@ -1,6 +1,7 @@
 <h1 align="center">
   <br />
-  Dodger
+  
+  ![dodger Logo](https://github.com/stefanDeveloper/dodger/assets/18898803/baa4278f-ef46-4227-a08c-cfb8445c17a4?raw=true)
 </h1>
 <h4 align="center">Be sure to :star: my configuration repo so you can keep up to date on any daily progress!</h4>
 <div align="center">
