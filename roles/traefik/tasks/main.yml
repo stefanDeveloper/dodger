@@ -63,7 +63,7 @@
       traefik.http.routers.wwwsecure-catchall.middlewares: "wwwtohttps"
 
       # middleware: http(s)://(www.) to  https://
-      traefik.http.middlewares.wwwtohttps.redirectregex.regex: "^https?://(?:www.)?(.+)"
+      traefik.http.middlewares.wwwtohttps.redirectregex.regex: "^https?:\/\/(?:www.)?(.+)"
       traefik.http.middlewares.wwwtohttps.redirectregex.replacement: "https://$${1}"
       traefik.http.middlewares.wwwtohttps.redirectregex.permanent: "true"
     networks:
