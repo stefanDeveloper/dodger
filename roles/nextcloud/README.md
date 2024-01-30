@@ -1,23 +1,4 @@
-# NextCloud
-
-To run docker-compose up you have to adapt `.env`
-
-## Usage
-
-Set the following environment variables:
-
-```env
-POSTGRES_PW=
-REDIS_PW=
-POSTGRES_PW=
-DOMAIN=
-```
-
-And then run
-
-```sh
-docker-compose up -d
-```
+# Nextcloud
 
 ## Useful
 

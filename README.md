@@ -5,9 +5,9 @@
 <h4 align="center">Be sure to :star: my configuration repo so you can keep up to date on any daily progress!</h4>
 <div align="center">
   <h4>
-    <a href="https://github.com/stefanDeveloper/dodger"><img src="https://img.shields.io/github/stars/stefanDeveloper/dodger.svg?style=plasticr"/></a>
-    <a href="https://github.com/stefanDeveloper/dodger/commits/main"><img src="https://img.shields.io/github/last-commit/stefanDeveloper/dodger.svg?style=plasticr"/></a>
-    <a href="https://github.com/stefanDeveloper/dodger/commits/main"><img src="https://img.shields.io/github/commit-activity/y/stefanDeveloper/dodger.svg?style=plasticr"/></a>
+    <a href="https://github.com/stefanDeveloper/dodger"><img src="https://img.shields.io/github/stars/stefanDeveloper/dodger.svg?style=for-the-badge"/></a>
+    <a href="https://github.com/stefanDeveloper/dodger/commits/main"><img src="https://img.shields.io/github/last-commit/stefanDeveloper/dodger.svg?style=for-the-badge"/></a>
+    <a href="https://github.com/stefanDeveloper/dodger/commits/main"><img src="https://img.shields.io/github/commit-activity/y/stefanDeveloper/dodger.svg?style=for-the-badge"/></a>
   </h4>
 </div>
 
@@ -18,7 +18,7 @@ This repository provides a complete Docker stack to easily set up your server wi
 ## Supported Applications
 
 * [Traefik](./traefik/README.md) as a reverse proxy to route your request (mandatory)
-* [Wordpress](./blog/README.md) just a simple Wordpress blog page
+* [Crowdsec](./Crowdsec/README.md) just the best firewall handler
 * [GitLab](./gitlab/README.md) for coding
 * [Nextcloud](./Nextcloud/README.md) one of my favorite private clouds :heart:
 * [Homer](./homer/README.md) just a landing page with links
@@ -35,19 +35,7 @@ Just clone this repository and follow each guideline inside the corresponding ap
 git clone https://github.com/stefanDeveloper/dodger.git
 ```
 
-In each of these folders you will find a `docker-compose.yml`, a `.env` file, as well as a `README.md` that describes some basics about this application.
-
-In case you want to run applications individually, please make sure your Docker environment has a network called `proxy`. If this is not the case, please run:
-
-```sh
-docker network create proxy
-```
-
-## Ansible
-
 Deploying made simple by applying Ansible Playbooks including hardening, installs and more!
-
-### Getting Started
 
 Create Python virtualenv and install requirements:
 
