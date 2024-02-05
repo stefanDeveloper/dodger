@@ -2,7 +2,7 @@
 
 - name: Download Gitlab repository
   delegate_to: "localhost"
-  become_user: "stefan"
+  become_user: "{{ hugo_local_user }}"
   ansible.builtin.git:
     repo: "{{ hugo_git_reposity }}"
     dest: "/tmp/{{ hugo_git_folder }}"
@@ -11,7 +11,7 @@
 
 - name: Build repository
   delegate_to: "localhost"
-  become_user: stefan
+  become_user: "{{ hugo_local_user }}"
   ansible.builtin.command:
     chdir: "/tmp/{{ hugo_git_folder }}"
     cmd: "{{ item }}"
@@ -50,7 +50,7 @@
       - "{{ hugo_docker_path }}/{{ hugo_git_folder }}/public:/usr/share/nginx/html"
     labels:
       traefik.enable: "true"
-      traefik.http.routers.hugo_private.rule: "Host(`machmeier-it.de`)"
+      traefik.http.routers.hugo_private.rule: "Host(`{{ hugo_domain }}`)"
       traefik.http.routers.hugo_private.entrypoints: "websecure"
       traefik.http.routers.hugo_private.tls.certresolver: "mytlschallenge"
 
