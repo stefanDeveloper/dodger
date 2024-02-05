@@ -11,6 +11,11 @@ all:
 
           homer_domain: "mlandt.de"
 
+          hugo_git_reposity: "git@github.com:.....git"
+          hugo_git_folder: "website"
+          hugo_domain: ""
+          hugo_local_user: "ubuntu"
+
           matrix_domain: "matrix.mlandt.de"
           matrix_synapse_domain: "synapse.mlandt.de"
           matrix_registration_shared_secret:
