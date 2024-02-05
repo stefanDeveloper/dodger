@@ -18,5 +18,6 @@
     - name: nextcloud
     - name: watchtower
     - name: matrix
+    - name: hugo
 
 # code: language=ansible
