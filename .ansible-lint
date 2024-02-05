@@ -1,0 +1,20 @@
+---
+exclude_paths:
+  - .cache/
+  - .github/
+  - inventory.yml
+  - ${HOME}/.ansible/
+  - .pre-commit-config.yaml
+  - pre-commit-config.yaml
+  - "**/files"
+  - files
+  - .yamllint
+  - inventories/*
+  - "*/.ansible/*"
+
+skip_list:
+  - "command-instead-of-module"
+  - "name[template]"
+  - "jinja[invalid]"
+  - "role-name[path]"
+  - "var-naming[no-role-prefix]"
