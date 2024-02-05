@@ -1,0 +1,73 @@
+all:
+  children:
+    dodger:
+      hosts:
+        hypervisor:
+          ansible_host: mlandt
+          ansible_port: 22
+          ansible_user: stefan
+
+          domain: "mlandt.de"
+
+          homer_domain: "mlandt.de"
+
+          matrix_domain: "matrix.mlandt.de"
+          matrix_synapse_domain: "synapse.mlandt.de"
+          matrix_registration_shared_secret:
+          matrix_macaroon_secret_key:
+          matrix_form_secret:
+          matrix_db_password:
+          mautrix_whatsapp_db_password:
+          mautrix_telegram_db_password:
+          mautrix_signal_db_password:
+
+          nextcloud_domain: "nextcloud.mlandt.de"
+          nextcloud_admin_password:
+          nextcloud_postgres_password:
+          nextcloud_redis_password:
+
+          wazuh_domain: wazuh.mlandt.de
+
+          traefik_domain: traefik.mlandt.de
+          traefik_dashboard_password:
+          traefik_network: proxy
+          traefik_mail: mail@example.com
+
+          gitlab_domain: gitlab.mlandt.de
+          gitlab_registry_domain: registry.mlandt.de
+
+          gitlab_smtp_address: smtp.office365.com
+          gitlab_smtp_port: 587
+          gitlab_smtp_mail: mail@example.com
+          gitlab_smtp_password:
+          gitlab_smtp_domain: outlook.com
+          gitlab_smtp_mail_from: mail@example.com
+          gitlab_smtp_mail_to: noreply@mlandt.de
+          gitlab_shell_ssh_port: 30022
+
+          gitlab_runner_enabled: true
+
+          openldap_hostname: openldap
+          openldap_port: 389
+          openldap_password:
+          openldap_base_dn: dc=mlandt,dc=de
+          openldap_domain: ldap.mlandt.de
+
+          crowdsec_lapi_port: 8090
+          crowdsec_install_firewall_bouncer: true
+          crowdsec_fw_bouncer_apikey: 
+          crowdsec:
+            version: latest
+            collections: crowdsecurity/traefik crowdsecurity/nextcloud crowdsecurity/nginx
+            acquis:
+              - traefik.yml
+              - nginx.yml
+            log_mounts:
+              - /var/log/nginx:/logs/nginx:ro
+              - /var/log/traefik/:/logs/traefik:ro
+              - /var/log/syslog:/var/log/syslog:ro
+              - /var/log/auth.log:/var/log/auth.log:ro
+            whitelist:
+              - /srv/docker/crowdsec/whitelist-de.yml:/etc/crowdsec/parsers/s02-enrich/whitelist-de.yml
+
+# code: language=ansible
