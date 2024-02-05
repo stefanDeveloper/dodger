@@ -1,4 +1,13 @@
 ---
+
+- name: Create folder for nextcloud
+  ansible.builtin.file:
+    path: "{{ nextcloud_docker_path }}"
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+
 - name: Create Nextcloud network
   community.docker.docker_network:
     name: nextcloud

@@ -1,4 +1,11 @@
 ---
+- name: Create folder for openldap
+  ansible.builtin.file:
+    path: "{{ openldap_docker_path }}"
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
 
 - name: Create OpenLDAP network
   community.docker.docker_network:
@@ -7,7 +14,6 @@
     ipam_driver: default
     ipam_config:
       - subnet: 172.29.0.0/24
-      
 
 - name: Create OpenLDAP container
   community.docker.docker_container:

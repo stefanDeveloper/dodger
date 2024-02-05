@@ -1,4 +1,12 @@
 ---
+- name: Create folder for traefik
+  ansible.builtin.file:
+    path: "{{ traefik_docker_path }}"
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+
 - name: Create Traefik network
   community.docker.docker_network:
     name: proxy
