@@ -1,0 +1,5 @@
+---
+
+hugo_docker_path: "/srv/docker/hugo"
+
+# code: language=ansible

@@ -1,0 +1,60 @@
+---
+
+- name: Download Gitlab repository
+  delegate_to: "localhost"
+  become_user: "stefan"
+  ansible.builtin.git:
+    repo: "{{ hugo_git_reposity }}"
+    dest: "/tmp/{{ hugo_git_folder }}"
+    force: true
+  changed_when: false
+
+- name: Build repository
+  delegate_to: "localhost"
+  become_user: stefan
+  ansible.builtin.command:
+    chdir: "/tmp/{{ hugo_git_folder }}"
+    cmd: "{{ item }}"
+  changed_when: false
+  with_items:
+    - npm install
+    - npm run build
+  
+- name: Create folder for hugo
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+  with_items:
+    - "{{ hugo_docker_path }}"
+    - "{{ hugo_docker_path }}/{{ hugo_git_folder }}"
+
+- name: Copy files
+  ansible.builtin.copy:
+    src: "/tmp/{{ hugo_git_folder }}/public"
+    dest: "{{ hugo_docker_path }}/{{ hugo_git_folder }}"
+    mode: 0755
+    owner: 101
+    group: 101
+
+- name: Start docker container
+  community.docker.docker_container:
+    name: "hugo-website"
+    hostname: "hugo-website"
+    image: "nginx:alpine"
+    networks:
+      - name: proxy
+    volumes:
+      - "{{ hugo_docker_path }}/{{ hugo_git_folder }}/public:/usr/share/nginx/html"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.hugo_private.rule: "Host(`machmeier-it.de`)"
+      traefik.http.routers.hugo_private.entrypoints: "websecure"
+      traefik.http.routers.hugo_private.tls.certresolver: "mytlschallenge"
+
+
+
+
+# code: language=ansible
