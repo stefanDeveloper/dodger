@@ -25,7 +25,7 @@
       LDAP_BASE_DN: "{{ openldap_base_dn }}"
       LDAP_ORGANISATION: "Machmeier-IT"
       LDAP_DOMAIN: "{{ openldap_domain }}"
-      LDAP_ADMIN_PASSWORD: "qjRNbLEXN0sNlFCQkDbYwBjwyzuXXrR6AVz8"
+      LDAP_ADMIN_PASSWORD: "{{ openldap_password }}"
       LDAP_REPLICATION: "false"
       LDAP_READONLY_USER: "false"
       LDAP_TLS_VERIFY_CLIENT: never
@@ -49,7 +49,7 @@
       LDAP_URI: "ldap://{{ openldap_hostname }}"
       LDAP_BASE_DN: "{{ openldap_base_dn }}"
       LDAP_ADMINS_GROUP: "admins"
-      LDAP_ADMIN_BIND_PWD: "qjRNbLEXN0sNlFCQkDbYwBjwyzuXXrR6AVz8"
+      LDAP_ADMIN_BIND_PWD: "{{ openldap_password }}"
       LDAP_ADMIN_BIND_DN: "cn=admin,{{ openldap_base_dn }}"
       SITE_NAME: "Machmeier-IT"
       SERVER_HOSTNAME: "https://{{ openldap_domain }}"
