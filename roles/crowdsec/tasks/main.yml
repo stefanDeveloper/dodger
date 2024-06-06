@@ -37,7 +37,7 @@
       test: ["CMD", "cscli", "version"]
     ports:
       - 127.0.0.1:{{ crowdsec_lapi_port }}:8080
-      - 6060:6060
+      - 127.0.0.1:6060:6060
     env:
       COLLECTIONS: "{{ crowdsec.collections }}"
       BOUNCER_KEY_firewall: "{{ crowdsec_fw_bouncer_apikey }}"
