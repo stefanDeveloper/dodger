@@ -1,21 +1,12 @@
 users:
   - username: root
+    shell: /bin/bash
     oh_my_zsh:
-      theme: agnoster
-      plugins:
-        - git
-      update_mode: reminder
-      update_frequency: 3
-      write_zshrc: true
+      install: false
   - username: stefan
     fullname: mrx8
     group: sudo
     key: "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAE9iXedWMkgEeMUd69tcZSe0E03TFZbd2Gno7k1KT5UvwGv8XjDVJGGjiVrCtIj9aFPZRE/T0oiE9s3f6Bsv9se6gB3ifSuvutr94/QM/WVj9JF/av474bsBUNYNUe4vX8hIqXk/WFnofE4RQEmq6/IkWEiRCjRi/414vNLn7UGQJzvyg== stefan@smachmeier-macbook.fritz.box"
-    shell: /bin/zsh
+    shell: /bin/bash
     oh_my_zsh:
-      theme: agnoster
-      plugins:
-        - git
-      update_mode: reminder
-      update_frequency: 3
-      write_zshrc: true
+      install: false
