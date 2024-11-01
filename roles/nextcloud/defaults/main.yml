@@ -1,6 +1,6 @@
 ---
 
-nextcloud_docker_path: "/srv/docker/nextcloud"
+nextcloud_docker_path: "{{ dodger_dir }}/nextcloud"
 
 nextcloud_postgres_username: nextcloud
 nextcloud_postgres_db: nextcloud

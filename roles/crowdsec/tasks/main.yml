@@ -24,7 +24,7 @@
 - name: Copy de-whitelist
   ansible.builtin.copy:
     src: whitelist-de.yml
-    dest: /srv/docker/crowdsec/whitelist-de.yml
+    dest: "{{ dodger_dir }}/crowdsec/whitelist-de.yml"
     mode: '0600'
 
 - name: Start CrowdSec Engine Container

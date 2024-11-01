@@ -1,5 +1,5 @@
 ---
 
-homer_docker_path: "/srv/docker/homer"
+homer_docker_path: "{{ dodger_dir }}/homer"
 
 # code: language=ansible

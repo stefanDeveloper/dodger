@@ -1,4 +1,0 @@
----
-dodger_dir: /srv/dodger
-
-docker_install_compose_plugin: true

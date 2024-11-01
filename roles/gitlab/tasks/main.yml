@@ -15,8 +15,6 @@
     ports:
       - "{{ gitlab_shell_ssh_port }}:22"
     networks:
-      # - name: gitlab
-      # - name: openldap
       - name: proxy
     volumes:
       - "{{ gitlab_docker_path }}/config:/etc/gitlab:Z"

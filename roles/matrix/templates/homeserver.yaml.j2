@@ -9,8 +9,8 @@
 # For more information on how to configure Synapse, including a complete accounting of
 # each option, go to docs/usage/configuration/config_documentation.md or
 # https://matrix-org.github.io/synapse/latest/usage/configuration/config_documentation.html
-server_name: "matrix.smachmeier.de"
-public_baseurl: https://synapse.smachmeier.de/
+server_name: "{{ matrix_domain }}"
+public_baseurl: https://{{ matrix_synapse_domain }}/
 pid_file: /data/homeserver.pid
 listeners:
   - port: 8008

@@ -5,8 +5,8 @@
     path: "{{ nextcloud_docker_path }}"
     state: directory
     mode: 0700
-    owner: root
-    group: root
+    owner: "{{ user }}"
+    group: "{{ group }}"
 
 - name: Create Nextcloud network
   community.docker.docker_network:
@@ -46,16 +46,16 @@
     volumes:
       - "{{ nextcloud_docker_path }}/redis:/var/lib/redis"
 
-- name: Create ClamAV Container
-  community.docker.docker_container:
-    name: "nextcloud_clamav"
-    hostname: "nextcloud_clamav"
-    image: "clamav/clamav:stable_base"
-    networks:
-      - name: proxy
-    volumes:
-      - /var/docker/clamav/virus_db/:/var/lib/clamav/
-    restart_policy: unless-stopped
+# - name: Create ClamAV Container
+#   community.docker.docker_container:
+#     name: "nextcloud_clamav"
+#     hostname: "nextcloud_clamav"
+#     image: "clamav/clamav:stable_base"
+#     networks:
+#       - name: proxy
+#     volumes:
+#       - /var/docker/clamav/virus_db/:/var/lib/clamav/
+#     restart_policy: unless-stopped
 
 - name: Create Nextcloud container
   community.docker.docker_container:
@@ -64,8 +64,6 @@
     image: "nextcloud:latest"
     restart_policy: unless-stopped
     networks:
-      # - name: nextcloud
-      # - name: openldap
       - name: proxy
     labels:
       traefik.enable: "true"

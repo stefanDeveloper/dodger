@@ -4,8 +4,8 @@
     path: "{{ openldap_docker_path }}"
     state: directory
     mode: 0700
-    owner: root
-    group: root
+    owner: "{{ user }}"
+    group: "{{ group }}"
 
 - name: Create OpenLDAP network
   community.docker.docker_network:
@@ -71,7 +71,6 @@
       traefik.http.routers.ldapmanager.middlewares: "ldapmanager-auth"
       traefik.http.middlewares.ldapmanager-auth.basicauth.users: "admin:{SHA}{{ traefik_dashboard_password }}"
     networks:
-      # - name: openldap
       - name: proxy
 
 # code: language=ansible

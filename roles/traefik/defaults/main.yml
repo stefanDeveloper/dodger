@@ -1,6 +1,6 @@
 ---
 
-traefik_docker_path: "/srv/docker/traefik"
+traefik_docker_path: "{{ dodger_dir }}/traefik"
 
 lp_logrotate_confd:
   - path: traefik

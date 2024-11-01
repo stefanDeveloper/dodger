@@ -1,5 +1,5 @@
 ---
 
-hugo_docker_path: "/srv/docker/hugo"
+hugo_docker_path: "{{ dodger_dir }}/hugo"
 
 # code: language=ansible

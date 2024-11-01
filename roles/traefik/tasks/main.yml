@@ -4,8 +4,8 @@
     path: "{{ traefik_docker_path }}"
     state: directory
     mode: 0700
-    owner: root
-    group: root
+    owner: "{{ user }}"
+    group: "{{ group }}"
 
 - name: Create Traefik network
   community.docker.docker_network:
@@ -29,7 +29,7 @@
     command: 
       - "--api=true"
       - "--accesslog=true"
-      - "--accesslog.filepath=/var/log/traefik/traefik.log"
+      # - "--accesslog.filepath=/var/log/traefik/traefik.log"
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -47,7 +47,7 @@
       - "443:443"
     volumes:
       - "{{ traefik_docker_path }}/letsencrypt:/letsencrypt"
-      - "/var/log/traefik/:/var/log/traefik/"
+      # - "/var/log/traefik/:/var/log/traefik/"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       traefik.enable: "true"
@@ -56,10 +56,10 @@
       traefik.http.routers.traefik.service: "api@internal"
       traefik.http.routers.traefik.tls.certresolver: "mytlschallenge"
       traefik.http.routers.traefik.entrypoints: "websecure"
-      traefik.http.routers.traefik.middlewares: "dashboardauth"
-      traefik.http.middlewares.dashboardauth.basicauth.users: "admin:{SHA}{{ traefik_dashboard_password }}"
+      # traefik.http.routers.traefik.middlewares: "dashboardauth"
+      # traefik.http.middlewares.dashboardauth.basicauth.users: "admin:{SHA}{{ traefik_dashboard_password }}"
 
-        # Global redirection: http to https
+       # Global redirection: http to https
       traefik.http.routers.http-catchall.rule: "HostRegexp(`{host:(www.)?.+}`)"
       traefik.http.routers.http-catchall.entrypoints: "web"
       traefik.http.routers.http-catchall.middlewares: "wwwtohttps"
@@ -74,6 +74,7 @@
       traefik.http.middlewares.wwwtohttps.redirectregex.regex: "^https?:\/\/(?:www.)?(.+)"
       traefik.http.middlewares.wwwtohttps.redirectregex.replacement: "https://$${1}"
       traefik.http.middlewares.wwwtohttps.redirectregex.permanent: "true"
+
     networks:
       - name: proxy
 

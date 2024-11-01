@@ -1,6 +1,6 @@
 ---
 
-matrix_docker_path: "/srv/docker/matrix"
+matrix_docker_path: "{{ dodger_dir }}/matrix"
 
 matrix_db_name: "synapse"
 matrix_db_user: "synapse"

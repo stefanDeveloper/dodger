@@ -1,5 +1,5 @@
 ---
 
-openldap_docker_path: "/srv/docker/openldap"
+openldap_docker_path: "{{ dodger_dir }}/openldap"
 
 # code: language=ansible
