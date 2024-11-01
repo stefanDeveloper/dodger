@@ -1,5 +1,5 @@
 ---
-crowdsec_docker_path: {{ dodger_dir }}/crowdsec
+crowdsec_docker_path: "{{ dodger_dir }}/crowdsec"
 
 crowdsec_default_mounts:
   - crowdsec_config:/etc/crowdsec

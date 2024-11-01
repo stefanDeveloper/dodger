@@ -7,14 +7,6 @@
     owner: "{{ user }}"
     group: "{{ group }}"
 
-- name: Create OpenLDAP network
-  community.docker.docker_network:
-    name: "openldap"
-    driver: bridge
-    ipam_driver: default
-    ipam_config:
-      - subnet: 172.29.0.0/24
-
 - name: Create OpenLDAP container
   community.docker.docker_container:
     name: "openldap"
