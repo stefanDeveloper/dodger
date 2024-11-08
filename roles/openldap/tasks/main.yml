@@ -4,8 +4,8 @@
     path: "{{ openldap_docker_path }}"
     state: directory
     mode: 0700
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    owner: "{{ dodger_user }}"
+    group: "{{ dodger_group }}"
 
 - name: Create OpenLDAP container
   community.docker.docker_container:

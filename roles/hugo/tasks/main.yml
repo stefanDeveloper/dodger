@@ -25,8 +25,8 @@
     path: "{{ item }}"
     state: directory
     mode: 0700
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    owner: "{{ dodger_user }}"
+    group: "{{ dodger_group }}"
   with_items:
     - "{{ hugo_docker_path }}"
     - "{{ hugo_docker_path }}/{{ hugo_git_folder }}"

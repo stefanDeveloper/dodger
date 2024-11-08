@@ -5,8 +5,8 @@
     path: "{{ nextcloud_docker_path }}"
     state: directory
     mode: 0700
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    owner: "{{ dodger_user }}"
+    group: "{{ dodger_group }}"
 
 - name: Create Postgres DB Container
   community.docker.docker_container:
@@ -14,9 +14,10 @@
     hostname: nextcloud_postgres
     image: postgres:13
     restart_policy: unless-stopped
+    recreate: True
     tty: true
     interactive: true
-    command: "postgres -c 'max_connections=200'"
+    command: "postgres -c 'max_connections=999'"
     networks:
       - name: proxy
     env:
@@ -60,8 +61,9 @@
     labels:
       traefik.enable: "true"
       traefik.http.routers.nextcloud.middlewares: "nextcloud,nextcloud-dav"
-      traefik.http.routers.nextcloud.tls.certresolver: "mytlschallenge"
+      # traefik.http.routers.nextcloud.tls.certresolver: "mytlschallenge"
       traefik.http.routers.nextcloud.rule: "Host(`{{ nextcloud_domain }}`)"
+      traefik.http.routers.nextcloud.tls: "true"
       traefik.http.middlewares.nextcloud.headers.customFrameOptionsValue: "ALLOW-FROM https://{{ domain }}"
       traefik.http.middlewares.nextcloud.headers.contentSecurityPolicy: "frame-ancestors 'self' {{ domain }} *.{{ domain }}"
       traefik.http.middlewares.nextcloud.headers.customresponseheaders.X-Frame-Options: "SAMEORIGIN"
@@ -90,7 +92,8 @@
   ansible.builtin.cron:
     name: nextcloud_background_job
     user: root
-    job: docker exec -u www-data nextcloud php /var/www/html/cron.php
-    minute: 5
+    job: /usr/local/bin/docker exec -u www-data nextcloud php /var/www/html/cron.php >/var/logs/cron.log 2>/var/log/cron_error.log
+    # */5 * * * *
+    minute: "*/5"
 
 # code: language=ansible

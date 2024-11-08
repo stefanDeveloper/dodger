@@ -4,8 +4,8 @@
     path: "{{ traefik_docker_path }}"
     state: directory
     mode: 0700
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    owner: "{{ dodger_user }}"
+    group: "{{ dodger_group }}"
 
 - name: Create Traefik network
   community.docker.docker_network:
@@ -35,18 +35,18 @@
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"
-      - "--certificatesresolvers.mytlschallenge.acme.email={{ traefik_mail }}"
-      - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.mytlschallenge.acme.keytype=EC384"
-      - "--certificatesresolvers.mytlschallenge.acme.preferredchain='ISRG Root X1'"
+      # - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"
+      # - "--certificatesresolvers.mytlschallenge.acme.email={{ traefik_mail }}"
+      # - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"
+      # - "--certificatesresolvers.mytlschallenge.acme.keytype=EC384"
+      # - "--certificatesresolvers.mytlschallenge.acme.preferredchain='ISRG Root X1'"
     ports:
       # The HTTP port
       - "80:80"
       # The Web UI (enabled by --api.insecure=true)
       - "443:443"
     volumes:
-      - "{{ traefik_docker_path }}/letsencrypt:/letsencrypt"
+      # - "{{ traefik_docker_path }}/letsencrypt:/letsencrypt"
       # - "/var/log/traefik/:/var/log/traefik/"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
@@ -54,8 +54,9 @@
       # Dashboard
       traefik.http.routers.traefik.rule: "Host(`{{ traefik_domain }}`)"
       traefik.http.routers.traefik.service: "api@internal"
-      traefik.http.routers.traefik.tls.certresolver: "mytlschallenge"
+      # traefik.http.routers.traefik.tls.certresolver: "mytlschallenge"
       traefik.http.routers.traefik.entrypoints: "websecure"
+      traefik.http.routers.traefik.tls: "true"
       # traefik.http.routers.traefik.middlewares: "dashboardauth"
       # traefik.http.middlewares.dashboardauth.basicauth.users: "admin:{SHA}{{ traefik_dashboard_password }}"
 

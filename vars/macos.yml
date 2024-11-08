@@ -1,5 +1,5 @@
 ---
 dodger_dir: /Users/macau/dodger/docker
 
-user: stefan
-group: "{{ group }}"
+dodger_user: macau
+dodger_group: wheel
