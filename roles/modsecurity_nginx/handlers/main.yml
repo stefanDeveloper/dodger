@@ -1,0 +1,5 @@
+---
+- name: Restart modsecurity-nginx
+  community.docker.docker_container:
+    name: modsecurity-nginx
+    restart: true

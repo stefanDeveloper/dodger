@@ -9,7 +9,7 @@
     group: "{{ dodger_group }}"
 
 - name: Create Postgres DB Container
-  community.docker.docker_container:
+  community.docker.docker_container: # 999:999
     name: nextcloud_postgres
     hostname: nextcloud_postgres
     image: postgres:13
@@ -51,28 +51,15 @@
     restart_policy: unless-stopped
 
 - name: Create Nextcloud container
-  community.docker.docker_container:
+  community.docker.docker_container: # 33:root
     name: "nextcloud"
     hostname: "nextcloud"
     image: "nextcloud:latest"
     restart_policy: unless-stopped
+    recreate: true
     networks:
       - name: proxy
-    labels:
-      traefik.enable: "true"
-      traefik.http.routers.nextcloud.middlewares: "nextcloud,nextcloud-dav"
-      # traefik.http.routers.nextcloud.tls.certresolver: "mytlschallenge"
-      traefik.http.routers.nextcloud.rule: "Host(`{{ nextcloud_domain }}`)"
-      traefik.http.routers.nextcloud.tls: "true"
-      traefik.http.middlewares.nextcloud.headers.customFrameOptionsValue: "ALLOW-FROM https://{{ domain }}"
-      traefik.http.middlewares.nextcloud.headers.contentSecurityPolicy: "frame-ancestors 'self' {{ domain }} *.{{ domain }}"
-      traefik.http.middlewares.nextcloud.headers.customresponseheaders.X-Frame-Options: "SAMEORIGIN"
-      traefik.http.middlewares.nextcloud.headers.stsSeconds: "155520011"
-      traefik.http.middlewares.nextcloud.headers.stsIncludeSubdomains: "true"
-      traefik.http.middlewares.nextcloud.headers.stsPreload: "true"
-
-      traefik.http.middlewares.nextcloud-dav.redirectregex.regex: "https://(.*)/.well-known/(card|cal)dav"
-      traefik.http.middlewares.nextcloud-dav.redirectregex.replacement: "https://{{ nextcloud_domain }}/remote.php/dav/"
+        ipv4_address: 172.18.0.5
     env:
       POSTGRES_DB: "{{ nextcloud_postgres_db }}"
       POSTGRES_USER: "{{ nextcloud_postgres_username }}"
@@ -95,5 +82,13 @@
     job: /usr/local/bin/docker exec -u www-data nextcloud php /var/www/html/cron.php >/var/logs/cron.log 2>/var/log/cron_error.log
     # */5 * * * *
     minute: "*/5"
+
+# - name: Update DNS
+#   ansible.builtin.cron:
+#     name: dns_background_job
+#     user: macau
+#     job: /usr/local/bin/php /Users/macau/dynamic-dns-netcup-api/update.php
+#     # */5 * * * *
+#     minute: "*/5"
 
 # code: language=ansible

@@ -1,0 +1,7 @@
+---
+modsec_docker_path: /srv/modsecurity-nginx
+
+modsecurity_crs_tag: nginx
+
+nginx_ca: "https://acme-v02.api.letsencrypt.org/directory"
+nginx_ca_mail: "stefan.machmeier@uni-heidelberg.de"

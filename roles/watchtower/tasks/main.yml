@@ -5,6 +5,8 @@
     name: watchtower
     image: "containrrr/watchtower"
     restart_policy: "unless-stopped"
+    env:
+      DOCKER_API_VERSION: "1.52" # https://github.com/containrrr/watchtower/issues/2122
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       

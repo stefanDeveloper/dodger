@@ -4,7 +4,7 @@
     name: devsec.hardening.os_hardening
   vars:
     os_user_pw_ageing: false
-    os_users_without_password_ageing: ["stefan"]
+    os_users_without_password_ageing: ["smachmeier", "macau"]
 
     ufw_default_input_policy: "ACCEPT"
     ufw_ipt_sysctl: "/etc/ufw/sysctl.conf"

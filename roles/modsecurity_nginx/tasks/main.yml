@@ -1,0 +1,115 @@
+---
+- name: Installing Pre-Reqs
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - certbot
+
+- name: Create {{ modsec_docker_path }}/ and subdirectories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+    mode: '0700'
+    owner: 101
+    group: 101
+  loop:
+    - "{{ modsec_docker_path }}/"
+    - "{{ modsec_docker_path }}/sites-enabled/"
+    - "{{ modsec_docker_path }}/certs/"
+    - "{{ modsec_docker_path }}/modsecurity-proxyconf/"
+
+- name: Copy nginx.conf template
+  ansible.builtin.copy:
+    src: nginx.conf
+    dest: "{{ modsec_docker_path }}/nginx.conf"
+    mode: '0600'
+    owner: 101
+    group: 101
+
+- name: Copy modsecurity.conf template
+  ansible.builtin.copy:
+    src: modsecurity.conf
+    dest: "{{ modsec_docker_path }}/modsecurity.conf"
+    mode: '0600'
+    owner: 101
+    group: 101
+
+- name: Copy proxy configurations
+  ansible.builtin.template:
+    src: "{{ domain.name }}.conf"
+    dest: "{{ modsec_docker_path }}/sites-enabled/{{ domain.name }}.conf"
+    mode: '0600'
+    owner: 101
+    group: 101
+  loop: "{{ domains }}"
+  loop_control:
+    label: "{{ domain.name }}"
+    loop_var: domain
+  notify: Restart modsecurity-nginx
+
+# ATTENTION! Known issue: https://www.freeipa.org/release-notes/4-10-2.html#known-issues
+# because of this we need to hardcode rsa keytype and size
+- name: Get Certificate and Key
+  ansible.builtin.command:
+    cmd: "certbot certonly -n --standalone -d {{ domain.name }} --server {{ nginx_ca }} --no-verify-ssl --agree-tos --email '{{ nginx_ca_mail }}'"
+  changed_when: false
+  loop: "{{ domains }}"
+  loop_control:
+    label: "{{ domain.name }}"
+    loop_var: domain
+
+- name: Create cron
+  ansible.builtin.cron:
+    name: "Certbot"
+    job: "docker stop modsecurity-nginx && certbot -q renew --no-verify-ssl && chown -R 101:101 /etc/letsencrypt/ && docker start modsecurity-nginx"
+    minute: 0
+    hour: 0
+
+- name: Create modsecurity-proxyconf
+  ansible.builtin.blockinfile:
+    create: true
+    path: "{{ modsec_docker_path }}/modsecurity-proxyconf/{{ item.name }}.conf"
+    block: |
+      Include /etc/modsecurity.d/setup.conf
+      {{ item.modsec_config }}
+    mode: '0600'
+    owner: 101
+    group: 101
+  loop: "{{ domains }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify: Restart modsecurity-nginx
+
+- name: Install crs-plugins
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ modsec_docker_path }}/modsecurity-proxyconf/{{ item }}"
+    mode: '0600'
+    owner: 101
+    group: 101
+  loop:
+    - nextcloud-rule-exclusions-config.conf
+    - nextcloud-rule-exclusions-before.conf
+  notify: Restart modsecurity-nginx
+
+- name: Start modsecurity-nginx container
+  community.docker.docker_container:
+    image: owasp/modsecurity-crs:{{ modsecurity_crs_tag }}
+    pull: true
+    name: modsecurity-nginx
+    recreate: true
+    restart_policy: always
+    networks:
+      - name: proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - "{{ modsec_docker_path }}/nginx.conf:/etc/nginx/templates/nginx.conf.template"
+      - "{{ modsec_docker_path }}/modsecurity.conf:/etc/nginx/templates/conf.d/modsecurity.conf.template"
+      - "/etc/letsencrypt//archive:/etc/nginx/ssl"
+      - "{{ modsec_docker_path }}/sites-enabled:/etc/nginx/sites-enabled"
+      - "{{ modsec_docker_path }}/modsecurity-proxyconf:/etc/nginx/modsecurity-proxyconf"
+      - "/var/log/nginx/:/var/log/nginx/"
+  tags: update-container
