@@ -3,21 +3,13 @@
   hosts: dodger
   become: true
   gather_facts: true
-  vars_files:
-    - "users.yml"
   roles:
-    - name: gantsign.oh-my-zsh
     - name: default
     - name: robertdebock.update
     - name: docker
     - name: crowdsec
-    - name: traefik
-    - name: openldap
-    - name: gitlab
-    - name: homer
     - name: nextcloud
     - name: watchtower
-    - name: matrix
-    - name: hugo
+    - name: modsecurity_nginx
 
 # code: language=ansible

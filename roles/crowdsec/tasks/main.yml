@@ -12,26 +12,27 @@
   ansible.builtin.copy:
     src: config.yaml
     dest: "{{ crowdsec_docker_path }}/config.yaml"
-    mode: '0600'
+    mode: '0700'
 
 - name: Copy acquisition configs
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ crowdsec_docker_path }}/acquis.d/{{ item }}"
-    mode: '0600'
+    mode: '0700'
   loop: "{{ crowdsec.acquis }}"
 
 - name: Copy de-whitelist
   ansible.builtin.copy:
     src: whitelist-de.yml
     dest: "{{ crowdsec_docker_path }}/whitelist-de.yml"
-    mode: '0600'
+    mode: '0700'
 
 - name: Start CrowdSec Engine Container
   community.docker.docker_container:
     image: crowdsecurity/crowdsec:{{ crowdsec.version }}
     pull: true
     name: crowdsec
+    recreate: true
     restart_policy: unless-stopped
     healthcheck:
       test: ["CMD", "cscli", "version"]
