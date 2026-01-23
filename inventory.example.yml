@@ -73,6 +73,6 @@ all:
               - /var/log/syslog:/var/log/syslog:ro
               - /var/log/auth.log:/var/log/auth.log:ro
             whitelist:
-              - /srv/docker/crowdsec/whitelist-de.yml:/etc/crowdsec/parsers/s02-enrich/whitelist-de.yml
+              - /srv/crowdsec/whitelist-de.yml:/etc/crowdsec/parsers/s02-enrich/whitelist-de.yml
 
 # code: language=ansible
