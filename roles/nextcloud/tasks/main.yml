@@ -70,7 +70,7 @@
       REDIS_HOST: "nextcloud_redis"
       REDIS_HOST_PASSWORD: "{{ nextcloud_redis_password }}"
       NEXTCLOUD_TRUSTED_DOMAINS: "{{ nextcloud_domain }}"
-      TRUSTED_PROXIES: "172.18.0.0/16"
+      TRUSTED_PROXIES: "172.18.0.0/24"
       OVERWRITEPROTOCOL: "https"
     volumes:
       - "{{ nextcloud_docker_path }}/nextcloud-www:/var/www/html"
@@ -79,7 +79,7 @@
   ansible.builtin.cron:
     name: nextcloud_background_job
     user: root
-    job: /usr/local/bin/docker exec -u www-data nextcloud php /var/www/html/cron.php >/var/logs/cron.log 2>/var/log/cron_error.log
+    job: /usr/bin/docker exec -u www-data nextcloud php /var/www/html/cron.php >/var/log/cron.log 2>/var/log/cron_error.log
     # */5 * * * *
     minute: "*/5"
 
