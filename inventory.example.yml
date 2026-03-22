@@ -3,21 +3,21 @@ all:
     dodger:
       hosts:
         hypervisor:
-          ansible_host: mlandt
+          ansible_host: example
           ansible_port: 22
           ansible_user: stefan
 
-          domain: "mlandt.de"
+          domain: "example.de"
 
-          homer_domain: "mlandt.de"
+          homer_domain: "example.de"
 
           hugo_git_reposity: "git@github.com:.....git"
           hugo_git_folder: "website"
           hugo_domain: ""
           hugo_local_user: "ubuntu"
 
-          matrix_domain: "matrix.mlandt.de"
-          matrix_synapse_domain: "synapse.mlandt.de"
+          matrix_domain: "matrix.example.de"
+          matrix_synapse_domain: "synapse.example.de"
           matrix_registration_shared_secret:
           matrix_macaroon_secret_key:
           matrix_form_secret:
@@ -26,20 +26,20 @@ all:
           mautrix_telegram_db_password:
           mautrix_signal_db_password:
 
-          nextcloud_domain: "nextcloud.mlandt.de"
+          nextcloud_domain: "nextcloud.example.de"
           nextcloud_admin_password:
           nextcloud_postgres_password:
           nextcloud_redis_password:
 
-          wazuh_domain: wazuh.mlandt.de
+          wazuh_domain: wazuh.example.de
 
-          traefik_domain: traefik.mlandt.de
+          traefik_domain: traefik.example.de
           traefik_dashboard_password:
           traefik_network: proxy
           traefik_mail: mail@example.com
 
-          gitlab_domain: gitlab.mlandt.de
-          gitlab_registry_domain: registry.mlandt.de
+          gitlab_domain: gitlab.example.de
+          gitlab_registry_domain: registry.example.de
 
           gitlab_smtp_address: smtp.office365.com
           gitlab_smtp_port: 587
@@ -47,7 +47,7 @@ all:
           gitlab_smtp_password:
           gitlab_smtp_domain: outlook.com
           gitlab_smtp_mail_from: mail@example.com
-          gitlab_smtp_mail_to: noreply@mlandt.de
+          gitlab_smtp_mail_to: noreply@example.de
           gitlab_shell_ssh_port: 30022
 
           gitlab_runner_enabled: true
@@ -55,8 +55,8 @@ all:
           openldap_hostname: openldap
           openldap_port: 389
           openldap_password:
-          openldap_base_dn: dc=mlandt,dc=de
-          openldap_domain: ldap.mlandt.de
+          openldap_base_dn: dc=example,dc=de
+          openldap_domain: ldap.example.de
 
           crowdsec_lapi_port: 8090
           crowdsec_install_firewall_bouncer: true
