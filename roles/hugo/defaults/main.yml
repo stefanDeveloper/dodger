@@ -1,5 +1,0 @@
----
-
-hugo_docker_path: "{{ dodger_dir }}/hugo"
-
-# code: language=ansible
