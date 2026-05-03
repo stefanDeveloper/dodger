@@ -21,12 +21,6 @@
     mode: '0700'
   loop: "{{ crowdsec.acquis }}"
 
-- name: Copy de-whitelist
-  ansible.builtin.copy:
-    src: whitelist-de.yml
-    dest: "{{ crowdsec_docker_path }}/whitelist-de.yml"
-    mode: '0700'
-
 - name: Start CrowdSec Engine Container
   community.docker.docker_container:
     image: crowdsecurity/crowdsec:{{ crowdsec.version }}
@@ -42,7 +36,7 @@
     env:
       COLLECTIONS: "{{ crowdsec.collections }}"
       BOUNCER_KEY_firewall: "{{ crowdsec_fw_bouncer_apikey }}"
-    volumes: "{{ crowdsec_default_mounts + crowdsec.log_mounts + crowdsec.whitelist}}"
+    volumes: "{{ crowdsec_default_mounts + crowdsec.log_mounts }}"
   tags: update-container
 
 - name: Install Firewall-Bouncer-IPtables
