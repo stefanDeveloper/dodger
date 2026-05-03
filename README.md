@@ -14,19 +14,12 @@
 
 ## Overview
 
-This repository provides a complete Docker stack to easily set up your server with Traefik, Portainer, Nextcloud, Homer, Openvpn, Gitlab, Wordpress, Resilio, Seafile, OpenLDAP, Jenkins, and Matrix.
+This repository provides a complete Docker stack to easily set up your server with Modsecurity, CrowdSec, and Nextcloud.
 
 ## Supported Applications
 
-* [Traefik](./traefik/README.md) as a reverse proxy to route your request (mandatory)
 * [Crowdsec](./Crowdsec/README.md) just the best firewall handler
-* [GitLab](./gitlab/README.md) for coding
 * [Nextcloud](./Nextcloud/README.md) one of my favorite private clouds :heart:
-* [Homer](./homer/README.md) just a landing page with links
-* [OpenLDAP](./openldap/README.md) configuration for easy usage with GUI.
-* [Matrix](./matrix/README.md) Synapse server with LDAP configuration.
-* [Hugo](./hugo/README.md) hugo server to deploy simple website.
-* [Wazuh](./wazuh/README.md) to monitor security events of our Docker containers.
 
 ## Getting Started
 
