@@ -1,5 +1,0 @@
----
-
-gitlab_docker_path: "{{ dodger_dir }}/gitlab"
-
-# code: language=ansible
