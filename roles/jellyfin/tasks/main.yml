@@ -1,0 +1,43 @@
+---
+
+- name: Create Jellyfin directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+    owner: "{{ jellyfin_user }}"
+    group: "{{ jellyfin_group }}"
+  loop:
+    - path: "{{ jellyfin_docker_path }}"
+      mode: '0750'
+    - path: "{{ jellyfin_config_path }}"
+      mode: '0750'
+    - path: "{{ jellyfin_cache_path }}"
+      mode: '0750'
+    - path: "{{ jellyfin_media_path }}"
+      mode: '0755'
+
+- name: Start Jellyfin container
+  community.docker.docker_container:
+    name: "{{ jellyfin_container_name }}"
+    hostname: "{{ jellyfin_container_name }}"
+    image: "{{ jellyfin_image }}"
+    pull: true
+    recreate: true
+    restart_policy: unless-stopped
+    user: "{{ (jellyfin_user_id is not none and jellyfin_group_id is not none) | ternary(jellyfin_user_id ~ ':' ~ jellyfin_group_id, omit) }}"
+    networks:
+      - name: "{{ jellyfin_network_name }}"
+        ipv4_address: "{{ jellyfin_ipv4_address }}"
+    env:
+      JELLYFIN_PublishedServerUrl: "{{ jellyfin_published_server_url }}"
+    volumes: "{{ jellyfin_default_volumes + jellyfin_extra_volumes }}"
+    devices: "{{ jellyfin_devices }}"
+  vars:
+    jellyfin_default_volumes:
+      - "{{ jellyfin_config_path }}:/config"
+      - "{{ jellyfin_cache_path }}:/cache"
+      - "{{ jellyfin_media_path }}:{{ jellyfin_media_container_path }}:{{ jellyfin_media_read_only | ternary('ro', 'rw') }}"
+  tags: update-container
+
+# code: language=ansible

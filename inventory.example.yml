@@ -2,17 +2,59 @@ all:
   children:
     dodger:
       hosts:
+        media:
+          ansible_host: media.example
+          ansible_port: 22
+          ansible_user: stefan
+          default_ufw_allowed_tcp_rules:
+            - port: "8096"
+              from_ip: "192.168.2.45"
+              to_ip: "192.168.2.163"
+              comment: "Allow hypervisor reverse proxy to Jellyfin"
         hypervisor:
           ansible_host: example
           ansible_port: 22
           ansible_user: stefan
+          default_ufw_allowed_tcp_rules:
+            - port: "22"
+              from_ip: "192.168.2.0/24"
+              to_ip: "192.168.2.45"
+              comment: "Allow LAN SSH to hypervisor"
+          default_ufw_allowed_docker_tcp_rules:
+            - port: "80"
+              from_ip: "192.168.2.0/24"
+              to_ip: "192.168.2.45"
+              comment: "Allow LAN HTTP to reverse proxy"
+            - port: "443"
+              from_ip: "192.168.2.0/24"
+              to_ip: "192.168.2.45"
+              comment: "Allow LAN HTTPS to reverse proxy"
 
           domain: "example.de"
 
           nextcloud_domain: "nextcloud.example.de"
+          jellyfin_domain: "jellyfin.example.de"
           nextcloud_admin_password:
           nextcloud_postgres_password:
           nextcloud_redis_password:
+
+          domains:
+            - name: nextcloud.example.de
+              template: nextcloud.mlandt.de.conf
+              modsec_config: |
+                SecRuleEngine     On
+                SecRequestBodyLimit 4294967296  # 4GB
+            - name: jellyfin.example.de
+              template: jellyfin.mlandt.de.conf
+              proxy_pass: http://172.18.0.11:8096
+              modsec_config: |
+                SecRuleEngine     On
+
+          netcup_dynamic_dns_enabled: true
+          netcup_dynamic_dns_customer_number:
+          netcup_dynamic_dns_api_key:
+          netcup_dynamic_dns_api_password:
+          netcup_dynamic_dns_domainlist: "example.de: @, nextcloud"
 
           crowdsec_lapi_port: 8090
           crowdsec_install_firewall_bouncer: true

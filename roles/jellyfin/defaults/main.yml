@@ -1,0 +1,24 @@
+---
+
+jellyfin_docker_path: "{{ dodger_dir }}/jellyfin"
+jellyfin_image: jellyfin/jellyfin:latest
+jellyfin_container_name: jellyfin
+jellyfin_domain: "jellyfin.{{ domain }}"
+jellyfin_network_name: proxy
+jellyfin_ipv4_address: 172.18.0.11
+jellyfin_published_server_url: "https://{{ jellyfin_domain }}"
+
+jellyfin_user: "{{ dodger_user }}"
+jellyfin_group: "{{ dodger_group }}"
+jellyfin_user_id:
+jellyfin_group_id:
+
+jellyfin_config_path: "{{ jellyfin_docker_path }}/config"
+jellyfin_cache_path: "{{ jellyfin_docker_path }}/cache"
+jellyfin_media_path: "{{ jellyfin_docker_path }}/media"
+jellyfin_media_container_path: /media
+jellyfin_media_read_only: true
+jellyfin_extra_volumes: []
+jellyfin_devices: []
+
+# code: language=ansible

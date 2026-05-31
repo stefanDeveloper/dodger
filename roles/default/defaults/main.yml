@@ -1,3 +1,9 @@
 ---
 
+default_configure_ufw: true
+default_ufw_allowed_tcp_ports: []
+default_ufw_allowed_tcp_rules: []
+default_ufw_allowed_docker_tcp_ports: []
+default_ufw_allowed_docker_tcp_rules: []
+
 # code: language=ansible

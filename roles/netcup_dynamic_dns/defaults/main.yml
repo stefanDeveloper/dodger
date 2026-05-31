@@ -1,0 +1,20 @@
+---
+
+netcup_dynamic_dns_enabled: false
+netcup_dynamic_dns_repo: "https://github.com/stecklars/dynamic-dns-netcup-api.git"
+netcup_dynamic_dns_version: master
+netcup_dynamic_dns_path: "{{ dodger_dir }}/dynamic-dns-netcup-api"
+netcup_dynamic_dns_user: "{{ dodger_user }}"
+netcup_dynamic_dns_group: "{{ dodger_group }}"
+netcup_dynamic_dns_php_bin: /usr/bin/php
+netcup_dynamic_dns_cron_minute: "*/5"
+netcup_dynamic_dns_customer_number: ""
+netcup_dynamic_dns_api_key: ""
+netcup_dynamic_dns_api_password: ""
+netcup_dynamic_dns_domainlist: "{{ domain }}: @"
+netcup_dynamic_dns_use_ipv4: true
+netcup_dynamic_dns_use_ipv6: false
+netcup_dynamic_dns_change_ttl: true
+netcup_dynamic_dns_jitter_max: 30
+
+# code: language=ansible

@@ -18,6 +18,7 @@
     - "{{ modsec_docker_path }}/sites-enabled/"
     - "{{ modsec_docker_path }}/certs/"
     - "{{ modsec_docker_path }}/modsecurity-proxyconf/"
+    - "{{ modsec_docker_path }}/crs-plugins/"
 
 - name: Copy nginx.conf template
   ansible.builtin.copy:
@@ -37,7 +38,7 @@
 
 - name: Copy proxy configurations
   ansible.builtin.template:
-    src: "{{ domain.name }}.conf"
+    src: "{{ domain.template | default(domain.name ~ '.conf') }}"
     dest: "{{ modsec_docker_path }}/sites-enabled/{{ domain.name }}.conf"
     mode: '0600'
     owner: 101
@@ -62,7 +63,8 @@
 - name: Create cron
   ansible.builtin.cron:
     name: "Certbot"
-    job: "geoip-shell off && docker stop modsecurity-nginx && certbot -q renew --no-verify-ssl && chown -R 101:101 /etc/letsencrypt/ && geoip-shell on && docker start modsecurity-nginx"
+    job: >-
+      {{ 'geoip-shell off && ' if geoip_shell_enabled | default(false) else '' }}docker stop modsecurity-nginx && certbot -q renew --no-verify-ssl && chown -R 101:101 /etc/letsencrypt/{{ ' && geoip-shell on' if geoip_shell_enabled | default(false) else '' }} && docker start modsecurity-nginx
     minute: 0
     hour: 0
 
@@ -81,16 +83,30 @@
     label: "{{ item.name }}"
   notify: Restart modsecurity-nginx
 
-- name: Install crs-plugins
+- name: Remove legacy Nextcloud CRS plugin copies
+  ansible.builtin.file:
+    path: "{{ modsec_docker_path }}/modsecurity-proxyconf/{{ item }}"
+    state: absent
+  loop: "{{ modsecurity_nextcloud_plugin_files }}"
+  notify: Restart modsecurity-nginx
+
+- name: Download Nextcloud CRS plugin files
+  ansible.builtin.uri:
+    url: "{{ modsecurity_nextcloud_plugin_base_url }}/{{ item }}"
+    return_content: true
+  loop: "{{ modsecurity_nextcloud_plugin_files }}"
+  register: nextcloud_crs_plugin_downloads
+
+- name: Install Nextcloud CRS plugin files
   ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: "{{ modsec_docker_path }}/modsecurity-proxyconf/{{ item }}"
+    content: "{{ item.content }}"
+    dest: "{{ modsec_docker_path }}/crs-plugins/{{ item.item }}"
     mode: '0600'
     owner: 101
     group: 101
-  loop:
-    - nextcloud-rule-exclusions-config.conf
-    - nextcloud-rule-exclusions-before.conf
+  loop: "{{ nextcloud_crs_plugin_downloads.results }}"
+  loop_control:
+    label: "{{ item.item }}"
   notify: Restart modsecurity-nginx
 
 - name: Start modsecurity-nginx container
@@ -100,6 +116,8 @@
     name: modsecurity-nginx
     recreate: true
     restart_policy: always
+    env:
+      MODSEC_RULE_ENGINE: "{{ modsecurity_rule_engine }}"
     networks:
       - name: proxy
         ipv4_address: 172.18.0.7
@@ -113,5 +131,6 @@
       - "/etc/letsencrypt/archive:/etc/letsencrypt/archive"
       - "{{ modsec_docker_path }}/sites-enabled:/etc/nginx/sites-enabled"
       - "{{ modsec_docker_path }}/modsecurity-proxyconf:/etc/nginx/modsecurity-proxyconf"
+      - "{{ modsec_docker_path }}/crs-plugins:/etc/modsecurity.d/owasp-crs/plugins:ro"
       - "/var/log/nginx/:/var/log/nginx/"
   tags: update-container

@@ -1,0 +1,7 @@
+---
+
+- name: Reload ufw
+  community.general.ufw:
+    state: reloaded
+
+# code: language=ansible

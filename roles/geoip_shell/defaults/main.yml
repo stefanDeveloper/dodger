@@ -1,0 +1,13 @@
+---
+
+geoip_shell_enabled: true
+geoip_shell_repo: "https://github.com/friendly-bits/geoip-shell.git"
+geoip_shell_version: main
+geoip_shell_path: "{{ dodger_dir }}/geoip-shell"
+geoip_shell_home_country: DE
+geoip_shell_countries: "DE"
+geoip_shell_interfaces: all
+geoip_shell_lan_ips: auto
+geoip_shell_trusted_ips: ""
+
+# code: language=ansible

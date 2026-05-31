@@ -1,0 +1,57 @@
+---
+
+- name: Install and configure netcup dynamic DNS client
+  when: netcup_dynamic_dns_enabled
+  block:
+    - name: Validate netcup dynamic DNS variables
+      ansible.builtin.assert:
+        that:
+          - netcup_dynamic_dns_customer_number | length > 0
+          - netcup_dynamic_dns_api_key | length > 0
+          - netcup_dynamic_dns_api_password | length > 0
+          - netcup_dynamic_dns_domainlist | length > 0
+        fail_msg: "Set netcup_dynamic_dns_customer_number, netcup_dynamic_dns_api_key, netcup_dynamic_dns_api_password, and netcup_dynamic_dns_domainlist."
+      # no_log: true
+
+    - name: Install netcup dynamic DNS dependencies
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - git
+        - php-cli
+        - php-curl
+
+    - name: Clone netcup dynamic DNS client
+      ansible.builtin.git:
+        repo: "{{ netcup_dynamic_dns_repo }}"
+        dest: "{{ netcup_dynamic_dns_path }}"
+        version: "{{ netcup_dynamic_dns_version }}"
+        update: true
+
+    - name: Set netcup dynamic DNS ownership
+      ansible.builtin.file:
+        path: "{{ netcup_dynamic_dns_path }}"
+        state: directory
+        owner: "{{ netcup_dynamic_dns_user }}"
+        group: "{{ netcup_dynamic_dns_group }}"
+        recurse: true
+
+    - name: Write netcup dynamic DNS config
+      ansible.builtin.template:
+        src: config.php.j2
+        dest: "{{ netcup_dynamic_dns_path }}/config.php"
+        owner: "{{ netcup_dynamic_dns_user }}"
+        group: "{{ netcup_dynamic_dns_group }}"
+        mode: '0600'
+      no_log: true
+
+- name: Configure netcup dynamic DNS cron
+  ansible.builtin.cron:
+    name: dns_background_job
+    user: "{{ netcup_dynamic_dns_user }}"
+    job: "{{ netcup_dynamic_dns_php_bin }} {{ netcup_dynamic_dns_path }}/update.php --quiet --config {{ netcup_dynamic_dns_path }}/config.php"
+    minute: "{{ netcup_dynamic_dns_cron_minute }}"
+    state: "{{ netcup_dynamic_dns_enabled | ternary('present', 'absent') }}"
+
+# code: language=ansible

@@ -9,4 +9,7 @@
     - htop
     - vim
 
+- name: Configure host firewall
+  ansible.builtin.include_tasks: "ufw.yml"
+
 # code: language=ansible

@@ -1,0 +1,20 @@
+<?php
+
+define('CUSTOMERNR', {{ netcup_dynamic_dns_customer_number | string | to_json }});
+define('APIPASSWORD', {{ netcup_dynamic_dns_api_password | string | to_json }});
+define('APIKEY', {{ netcup_dynamic_dns_api_key | string | to_json }});
+
+define('DOMAINLIST', {{ netcup_dynamic_dns_domainlist | string | to_json }});
+
+define('IPV4_ADDRESS_URL', 'https://get-ipv4.steck.cc');
+define('IPV4_ADDRESS_URL_FALLBACK', 'https://ipv4.seeip.org');
+define('IPV6_ADDRESS_URL', 'https://get-ipv6.steck.cc');
+define('IPV6_ADDRESS_URL_FALLBACK', 'https://v6.ident.me');
+
+define('USE_IPV4', {{ netcup_dynamic_dns_use_ipv4 | ternary('true', 'false') }});
+define('USE_IPV6', {{ netcup_dynamic_dns_use_ipv6 | ternary('true', 'false') }});
+define('CHANGE_TTL', {{ netcup_dynamic_dns_change_ttl | ternary('true', 'false') }});
+define('JITTER_MAX', {{ netcup_dynamic_dns_jitter_max }});
+define('CACHE_FILE', __DIR__ . '/cache.json');
+
+define('APIURL', 'https://ccp.netcup.net/run/webservice/servers/endpoint.php?JSON');

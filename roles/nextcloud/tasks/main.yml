@@ -12,7 +12,7 @@
   community.docker.docker_container: # 999:999
     name: nextcloud_postgres
     hostname: nextcloud_postgres
-    image: postgres:13
+    image: postgres:18
     restart_policy: unless-stopped
     recreate: True
     tty: true
@@ -20,22 +20,26 @@
     command: "postgres -c 'max_connections=999'"
     networks:
       - name: proxy
+        ipv4_address: 172.18.0.6
     env:
       POSTGRES_USER: "{{ nextcloud_postgres_username }}"
       POSTGRES_PASSWORD: "{{ nextcloud_postgres_password }}"
       POSTGRES_DB: "{{ nextcloud_postgres_db }}"
+      PGDATA: "/var/lib/postgresql/data"
     volumes:
-      - "{{ nextcloud_docker_path }}/nextcloud-db:/var/lib/postgresql/data"
+      - "{{ nextcloud_docker_path }}/nextcloud-db-18:/var/lib/postgresql/data"
 
 - name: Create Redis Container
   community.docker.docker_container:
     name: nextcloud_redis
     hostname: nextcloud_redis
     restart_policy: unless-stopped
+    recreate: True
     image: redis:latest
     command: "redis-server --requirepass {{ nextcloud_redis_password }}"
     networks:
       - name: proxy
+        ipv4_address: 172.18.0.8
     volumes:
       - "{{ nextcloud_docker_path }}/redis:/var/lib/redis"
 
@@ -44,8 +48,10 @@
     name: "nextcloud_clamav"
     hostname: "nextcloud_clamav"
     image: "clamav/clamav:stable_base"
+    recreate: True
     networks:
       - name: proxy
+        ipv4_address: 172.18.0.9
     volumes:
       - "{{ nextcloud_docker_path }}/clamav/virus_db/:/var/lib/clamav/"
     restart_policy: unless-stopped
@@ -59,7 +65,7 @@
     recreate: true
     networks:
       - name: proxy
-        ipv4_address: 172.18.0.5
+        ipv4_address: 172.18.0.10
     env:
       POSTGRES_DB: "{{ nextcloud_postgres_db }}"
       POSTGRES_USER: "{{ nextcloud_postgres_username }}"
@@ -82,13 +88,5 @@
     job: /usr/bin/docker exec -u www-data nextcloud php /var/www/html/cron.php >/var/log/cron.log 2>/var/log/cron_error.log
     # */5 * * * *
     minute: "*/5"
-
-# - name: Update DNS
-#   ansible.builtin.cron:
-#     name: dns_background_job
-#     user: macau
-#     job: /usr/local/bin/php /Users/macau/dynamic-dns-netcup-api/update.php
-#     # */5 * * * *
-#     minute: "*/5"
 
 # code: language=ansible

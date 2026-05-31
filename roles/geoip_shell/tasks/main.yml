@@ -1,0 +1,66 @@
+---
+
+- name: Install geoip-shell dependencies
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - curl
+    - git
+    - ipset
+  when: geoip_shell_enabled
+
+- name: Install and configure geoip-shell
+  when: geoip_shell_enabled
+  block:
+    - name: Clone geoip-shell
+      ansible.builtin.git:
+        repo: "{{ geoip_shell_repo }}"
+        dest: "{{ geoip_shell_path }}"
+        version: "{{ geoip_shell_version }}"
+        update: true
+
+    - name: Check geoip-shell command
+      ansible.builtin.stat:
+        path: /usr/local/bin/geoip-shell
+      register: geoip_shell_command
+
+    - name: Install geoip-shell
+      ansible.builtin.command:
+        cmd: sh geoip-shell-install.sh -z
+        chdir: "{{ geoip_shell_path }}"
+      when: not geoip_shell_command.stat.exists
+
+    - name: Configure geoip-shell country whitelist
+      ansible.builtin.command:
+        argv:
+          - geoip-shell
+          - configure
+          - -r
+          - "{{ geoip_shell_home_country }}"
+          - -i
+          - "{{ geoip_shell_interfaces }}"
+          - -l
+          - "{{ geoip_shell_lan_ips }}"
+          - -m
+          - whitelist
+          - -c
+          - "{{ geoip_shell_countries }}"
+      changed_when: false
+
+    - name: Configure geoip-shell trusted IPs
+      ansible.builtin.command:
+        argv:
+          - geoip-shell
+          - configure
+          - -t
+          - "{{ geoip_shell_trusted_ips }}"
+      changed_when: false
+      when: geoip_shell_trusted_ips | length > 0
+
+    - name: Enable geoip-shell
+      ansible.builtin.command:
+        cmd: geoip-shell on
+      changed_when: false
+
+# code: language=ansible
