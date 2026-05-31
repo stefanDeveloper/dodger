@@ -20,6 +20,12 @@
     - "{{ modsec_docker_path }}/modsecurity-proxyconf/"
     - "{{ modsec_docker_path }}/crs-plugins/"
 
+- name: Ensure modsecurity-nginx Docker network exists
+  community.docker.docker_network:
+    name: "{{ modsecurity_network_name }}"
+    ipam_config:
+      - subnet: "{{ modsecurity_network_subnet }}"
+
 - name: Copy nginx.conf template
   ansible.builtin.copy:
     src: nginx.conf
@@ -49,16 +55,44 @@
     loop_var: domain
   notify: Restart modsecurity-nginx
 
-# ATTENTION! Known issue: https://www.freeipa.org/release-notes/4-10-2.html#known-issues
-# because of this we need to hardcode rsa keytype and size
-- name: Get Certificate and Key
-  ansible.builtin.command:
-    cmd: "certbot certonly -n --standalone -d {{ domain.name }} --server {{ nginx_ca }} --no-verify-ssl --agree-tos --email '{{ nginx_ca_mail }}'"
-  changed_when: false
-  loop: "{{ domains }}"
-  loop_control:
-    label: "{{ domain.name }}"
-    loop_var: domain
+- name: Get certificates and keys
+  block:
+    - name: Disable geoip-shell for standalone certbot
+      ansible.builtin.command:
+        cmd: geoip-shell off
+      changed_when: false
+      failed_when: false
+      when: geoip_shell_enabled | default(true)
+
+    - name: Stop modsecurity-nginx for standalone certbot
+      community.docker.docker_container:
+        name: modsecurity-nginx
+        state: stopped
+      failed_when: false
+
+    # ATTENTION! Known issue: https://www.freeipa.org/release-notes/4-10-2.html#known-issues
+    # because of this we need to hardcode rsa keytype and size
+    - name: Get Certificate and Key
+      ansible.builtin.command:
+        cmd: "certbot certonly -n --standalone -d {{ cert_domain.name }} --server {{ nginx_ca }} --no-verify-ssl --agree-tos --email '{{ nginx_ca_mail }}'"
+      changed_when: false
+      loop: "{{ domains }}"
+      loop_control:
+        label: "{{ cert_domain.name }}"
+        loop_var: cert_domain
+  always:
+    - name: Start modsecurity-nginx after standalone certbot
+      community.docker.docker_container:
+        name: modsecurity-nginx
+        state: started
+      failed_when: false
+
+    - name: Enable geoip-shell after standalone certbot
+      ansible.builtin.command:
+        cmd: geoip-shell on
+      changed_when: false
+      failed_when: false
+      when: geoip_shell_enabled | default(true)
 
 - name: Create cron
   ansible.builtin.cron:
@@ -119,8 +153,8 @@
     env:
       MODSEC_RULE_ENGINE: "{{ modsecurity_rule_engine }}"
     networks:
-      - name: proxy
-        ipv4_address: 172.18.0.7
+      - name: "{{ modsecurity_network_name }}"
+        ipv4_address: "{{ modsecurity_ipv4_address }}"
     ports:
       - 80:80
       - 443:443

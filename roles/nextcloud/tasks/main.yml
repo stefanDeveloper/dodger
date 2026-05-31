@@ -8,6 +8,12 @@
     owner: "{{ dodger_user }}"
     group: "{{ dodger_group }}"
 
+- name: Ensure Nextcloud Docker network exists
+  community.docker.docker_network:
+    name: "{{ nextcloud_network_name }}"
+    ipam_config:
+      - subnet: "{{ nextcloud_network_subnet }}"
+
 - name: Create Postgres DB Container
   community.docker.docker_container: # 999:999
     name: nextcloud_postgres
@@ -19,8 +25,8 @@
     interactive: true
     command: "postgres -c 'max_connections=999'"
     networks:
-      - name: proxy
-        ipv4_address: 172.18.0.6
+      - name: "{{ nextcloud_network_name }}"
+        ipv4_address: "{{ nextcloud_postgres_ipv4_address }}"
     env:
       POSTGRES_USER: "{{ nextcloud_postgres_username }}"
       POSTGRES_PASSWORD: "{{ nextcloud_postgres_password }}"
@@ -38,8 +44,8 @@
     image: redis:latest
     command: "redis-server --requirepass {{ nextcloud_redis_password }}"
     networks:
-      - name: proxy
-        ipv4_address: 172.18.0.8
+      - name: "{{ nextcloud_network_name }}"
+        ipv4_address: "{{ nextcloud_redis_ipv4_address }}"
     volumes:
       - "{{ nextcloud_docker_path }}/redis:/var/lib/redis"
 
@@ -50,8 +56,8 @@
     image: "clamav/clamav:stable_base"
     recreate: True
     networks:
-      - name: proxy
-        ipv4_address: 172.18.0.9
+      - name: "{{ nextcloud_network_name }}"
+        ipv4_address: "{{ nextcloud_clamav_ipv4_address }}"
     volumes:
       - "{{ nextcloud_docker_path }}/clamav/virus_db/:/var/lib/clamav/"
     restart_policy: unless-stopped
@@ -64,8 +70,8 @@
     restart_policy: unless-stopped
     recreate: true
     networks:
-      - name: proxy
-        ipv4_address: 172.18.0.10
+      - name: "{{ nextcloud_network_name }}"
+        ipv4_address: "{{ nextcloud_ipv4_address }}"
     env:
       POSTGRES_DB: "{{ nextcloud_postgres_db }}"
       POSTGRES_USER: "{{ nextcloud_postgres_username }}"
@@ -76,7 +82,7 @@
       REDIS_HOST: "nextcloud_redis"
       REDIS_HOST_PASSWORD: "{{ nextcloud_redis_password }}"
       NEXTCLOUD_TRUSTED_DOMAINS: "{{ nextcloud_domain }}"
-      TRUSTED_PROXIES: "172.18.0.0/24"
+      TRUSTED_PROXIES: "{{ nextcloud_trusted_proxies }}"
       OVERWRITEPROTOCOL: "https"
     volumes:
       - "{{ nextcloud_docker_path }}/nextcloud-www:/var/www/html"

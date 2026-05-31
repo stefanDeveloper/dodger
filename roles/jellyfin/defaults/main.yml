@@ -5,6 +5,7 @@ jellyfin_image: jellyfin/jellyfin:latest
 jellyfin_container_name: jellyfin
 jellyfin_domain: "jellyfin.{{ domain }}"
 jellyfin_network_name: proxy
+jellyfin_network_subnet: 172.18.0.0/24
 jellyfin_ipv4_address: 172.18.0.11
 jellyfin_published_server_url: "https://{{ jellyfin_domain }}"
 

@@ -39,47 +39,11 @@
       loop_control:
         label: "{{ item.from_ip }} -> {{ item.to_ip | default('any') }}:{{ item.port }}"
 
-    - name: Allow routed Docker TCP services through UFW
-      community.general.ufw:
-        rule: allow
-        route: true
-        proto: tcp
-        port: "{{ item }}"
-      loop: "{{ default_ufw_allowed_docker_tcp_ports }}"
-
-    - name: Allow routed Docker TCP services through UFW from trusted sources
-      community.general.ufw:
-        rule: allow
-        route: true
-        proto: tcp
-        port: "{{ item.port }}"
-        from_ip: "{{ item.from_ip }}"
-        to_ip: "{{ item.to_ip | default(omit) }}"
-        comment: "{{ item.comment | default(omit) }}"
-      loop: "{{ default_ufw_allowed_docker_tcp_rules }}"
-      loop_control:
-        label: "{{ item.from_ip }} -> {{ item.to_ip | default('any') }}:{{ item.port }}"
-
-    - name: Add UFW Docker table rules
+    - name: Remove UFW Docker table rules
       ansible.builtin.blockinfile:
         path: /etc/ufw/after.rules
         marker: "# {mark} ANSIBLE MANAGED BLOCK - Docker UFW"
-        block: |
-          *filter
-          :ufw-docker-logging-deny - [0:0]
-          :DOCKER-USER - [0:0]
-          -A DOCKER-USER -j ufw-user-forward
-          -A DOCKER-USER -j RETURN -s 10.0.0.0/8
-          -A DOCKER-USER -j RETURN -s 172.16.0.0/12
-          -A DOCKER-USER -j RETURN -s 192.168.0.0/16
-          -A DOCKER-USER -j RETURN -p udp --sport 53 --dport 1024:65535
-          -A DOCKER-USER -j ufw-docker-logging-deny -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN
-          -A DOCKER-USER -j ufw-docker-logging-deny -p udp -m udp --dport 0:32767
-          -A DOCKER-USER -j DROP
-          -A ufw-docker-logging-deny -m limit --limit 3/min --limit-burst 10 -j LOG --log-prefix "[UFW DOCKER BLOCK] "
-          -A ufw-docker-logging-deny -j DROP
-          COMMIT
-        mode: '0640'
+        state: absent
       notify: Reload ufw
 
     - name: Enable UFW

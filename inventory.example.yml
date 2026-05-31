@@ -20,15 +20,9 @@ all:
               from_ip: "192.168.2.0/24"
               to_ip: "192.168.2.45"
               comment: "Allow LAN SSH to hypervisor"
-          default_ufw_allowed_docker_tcp_rules:
-            - port: "80"
-              from_ip: "192.168.2.0/24"
-              to_ip: "192.168.2.45"
-              comment: "Allow LAN HTTP to reverse proxy"
-            - port: "443"
-              from_ip: "192.168.2.0/24"
-              to_ip: "192.168.2.45"
-              comment: "Allow LAN HTTPS to reverse proxy"
+          default_ufw_allowed_tcp_ports:
+            - "80"
+            - "443"
 
           domain: "example.de"
 
@@ -40,13 +34,15 @@ all:
 
           domains:
             - name: nextcloud.example.de
-              template: nextcloud.mlandt.de.conf
+              template: nextcloud.conf
               modsec_config: |
                 SecRuleEngine     On
                 SecRequestBodyLimit 4294967296  # 4GB
             - name: jellyfin.example.de
-              template: jellyfin.mlandt.de.conf
+              template: jellyfin.conf
               proxy_pass: http://172.18.0.11:8096
+              allowed_networks:
+                - 192.168.2.0/24
               modsec_config: |
                 SecRuleEngine     On
 

@@ -17,6 +17,12 @@
     - path: "{{ jellyfin_media_path }}"
       mode: '0755'
 
+- name: Ensure Jellyfin Docker network exists
+  community.docker.docker_network:
+    name: "{{ jellyfin_network_name }}"
+    ipam_config:
+      - subnet: "{{ jellyfin_network_subnet }}"
+
 - name: Start Jellyfin container
   community.docker.docker_container:
     name: "{{ jellyfin_container_name }}"
@@ -29,6 +35,8 @@
     networks:
       - name: "{{ jellyfin_network_name }}"
         ipv4_address: "{{ jellyfin_ipv4_address }}"
+    ports:
+      - 8096:8096
     env:
       JELLYFIN_PublishedServerUrl: "{{ jellyfin_published_server_url }}"
     volumes: "{{ jellyfin_default_volumes + jellyfin_extra_volumes }}"

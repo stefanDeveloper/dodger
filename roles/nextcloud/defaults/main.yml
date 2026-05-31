@@ -1,8 +1,16 @@
 ---
 
 nextcloud_docker_path: "{{ dodger_dir }}/nextcloud"
+nextcloud_network_name: proxy
+nextcloud_network_subnet: 172.18.0.0/24
 
 nextcloud_postgres_username: nextcloud
 nextcloud_postgres_db: nextcloud
+
+nextcloud_postgres_ipv4_address: 172.18.0.6
+nextcloud_redis_ipv4_address: 172.18.0.8
+nextcloud_clamav_ipv4_address: 172.18.0.9
+nextcloud_ipv4_address: 172.18.0.10
+nextcloud_trusted_proxies: 172.18.0.0/24
 
 # code: language=ansible
