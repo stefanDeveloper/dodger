@@ -1,6 +1,6 @@
 ---
-- name: Setup dodger
-  hosts: dodger
+- name: Setup hypervisor
+  hosts: hypervisor
   become: true
   gather_facts: true
   roles:
@@ -9,7 +9,20 @@
     - name: docker
     - name: crowdsec
     - name: nextcloud
+    - name: netcup_dynamic_dns
+    - name: geoip_shell
     - name: watchtower
     - name: modsecurity_nginx
+
+- name: Setup media
+  hosts: media
+  become: true
+  gather_facts: true
+  roles:
+    - name: default
+    - name: robertdebock.update
+    - name: docker
+    - name: jellyfin
+    - name: watchtower
 
 # code: language=ansible
