@@ -18,6 +18,7 @@ jellyfin_config_path: "{{ jellyfin_docker_path }}/config"
 jellyfin_cache_path: "{{ jellyfin_docker_path }}/cache"
 jellyfin_media_path: "{{ jellyfin_docker_path }}/media"
 jellyfin_media_container_path: /media
+jellyfin_music_container_path: /music
 jellyfin_media_read_only: true
 jellyfin_extra_volumes: []
 jellyfin_devices: []

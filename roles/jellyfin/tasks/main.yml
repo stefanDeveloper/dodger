@@ -46,6 +46,7 @@
       - "{{ jellyfin_config_path }}:/config"
       - "{{ jellyfin_cache_path }}:/cache"
       - "{{ jellyfin_media_path }}:{{ jellyfin_media_container_path }}:{{ jellyfin_media_read_only | ternary('ro', 'rw') }}"
+      - "{{ jellyfin_music_path }}:{{ jellyfin_music_container_path }}:{{ jellyfin_media_read_only | ternary('ro', 'rw') }}"
   tags: update-container
 
 # code: language=ansible
